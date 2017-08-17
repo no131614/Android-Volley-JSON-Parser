@@ -16,6 +16,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity { // Will show the string "data" that holds the results
@@ -24,6 +25,7 @@ public class MainActivity extends AppCompatActivity { // Will show the string "d
     Button buttonStart;
 
     String URL = "https://shopicruit.myshopify.com/admin/orders.json?page=1&access_token=c32313df0d0ef512ca64d5b336a0d7c6";
+    String name_number = null;
 
     RequestQueue requestQueue;
 
@@ -52,6 +54,10 @@ public class MainActivity extends AppCompatActivity { // Will show the string "d
 
                                 try {
 
+                                    //Reset Amount
+                                    bronze_bag_count = 0;
+                                    total_price_amount = 0;
+
                                     //Get the Order JSON Array
                                     JSONArray OrderArray = response.getJSONArray("orders");
 
@@ -64,8 +70,26 @@ public class MainActivity extends AppCompatActivity { // Will show the string "d
                                         //Get a line items array from an order
                                         JSONArray line_itemsArray = Order.getJSONArray("line_items");
 
-                                        //Get total price for an order
-                                        total_price_amount += Order.getDouble("total_price");
+                                        //Get customer info
+                                        try {
+                                            JSONObject Customer = Order.getJSONObject("customer");// Customer might not exist
+
+                                            // Begin: Check if it is Napoleon Batz and calculate his total price
+                                            String first_name = Customer.getString("first_name");
+                                            String last_name = Customer.getString("last_name");
+                                            if (first_name.equals("Napoleon") && last_name.equals("Batz")) {
+
+                                                //Get total price for an order
+                                                total_price_amount += Order.getDouble("total_price");
+
+                                            }
+                                            // End: Check if it is Napoleon Batz and calculate his total price
+                                        } catch (JSONException JE) {
+
+                                            name_number = Order.getString("name");
+
+                                        }
+
 
                                         //Tracing trough the line items array
                                         for (int line_index = 0; line_index < line_itemsArray.length(); line_index++) {
@@ -77,16 +101,17 @@ public class MainActivity extends AppCompatActivity { // Will show the string "d
                                             String item_title = Item.getString("title");
 
                                             if (item_title.equals("Awesome Bronze Bag")) {
-                                                bronze_bag_count++;
+                                                bronze_bag_count += Item.getInt("quantity");
                                             }
 
                                         }
 
                                     }
 
+                                    textViewResult.setText(null);
                                     textViewResult.append("Number of bronze bags :" + bronze_bag_count);
                                     textViewResult.append(" \n");
-                                    textViewResult.append("Total Cost :" +String.format("%.2f", total_price_amount));
+                                    textViewResult.append("Napoleon Batz Total Cost :" + String.format("%.2f", total_price_amount));
 
                                 } catch (Exception e) {
                                     e.printStackTrace();
