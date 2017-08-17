@@ -19,7 +19,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class MainActivity extends AppCompatActivity { // Will show the string "data" that holds the results
+public class MainActivity extends AppCompatActivity {
     TextView textViewResult;
 
     Button buttonStart;
@@ -127,7 +127,8 @@ public class MainActivity extends AppCompatActivity { // Will show the string "d
                             }
                         });
 
-                requestQueue.add(JsonObjectR);
+                // Send the JSON request
+                JSONVolleyController.getInstance().addToRequestQueue(JsonObjectR);
             }
         });
 
