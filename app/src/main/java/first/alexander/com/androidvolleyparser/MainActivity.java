@@ -23,6 +23,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 import static java.security.AccessController.getContext;
 
 public class MainActivity extends AppCompatActivity {
@@ -61,8 +63,9 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 textViewResult.setText(null);
 
-                JSONRequestNumOfItems("Awesome Bronze Bag");
-                JSONRequestTotalPrice("Napoleon", "Batz");
+                //JSONRequestNumOfItems("Awesome Bronze Bag");
+                //JSONRequestTotalPrice("Napoleon", "Batz");
+                JSONRequestGetCustomers();
 
             }
         });
@@ -157,8 +160,7 @@ public class MainActivity extends AppCompatActivity {
         // Send the JSON request
         JSONVolleyController.getInstance().addToRequestQueue(JsonObjectR);
     }
-
-
+    
     private void JSONRequestTotalPrice(String first_name, String last_name) {
 
         final String FIRST_NAME = first_name;
@@ -249,6 +251,90 @@ public class MainActivity extends AppCompatActivity {
 
         // Send the JSON request
         JSONVolleyController.getInstance().addToRequestQueue(JsonObjectR);
+    }
+
+    private ArrayList JSONRequestGetCustomers(){
+
+        final ArrayList customers_list = new ArrayList();
+
+        JsonObjectRequest JsonObjectR = new JsonObjectRequest
+                (Request.Method.GET, URL, null, new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+
+                        try {
+
+                            // Get the Order JSON Array
+                            JSONArray OrderArray = response.getJSONArray("orders");
+
+                            // Tracing trough the Order array
+                            for (int order_index = 0; order_index < OrderArray.length(); order_index++) {
+
+                                // Get an order
+                                JSONObject Order = OrderArray.getJSONObject(order_index);
+
+                                // Make sure order is not cancelled
+                                if (Order.getString("cancel_reason").equals("null")) {
+
+                                    // Get a line items array from an order
+                                    JSONArray line_itemsArray = Order.getJSONArray("line_items");
+
+                                    // Get customer info
+                                    try {
+                                        JSONObject Customer = Order.getJSONObject("customer");// Customer might not exist
+
+                                        // Get customer full name
+                                        String name = Customer.getString("first_name") + " " + Customer.getString("last_name");
+
+                                        // Check for duplicates and add the name into the list
+                                        if(!customers_list.contains(name)){
+                                            customers_list.add(name);
+                                        }
+
+
+                                    } catch (JSONException JE) {
+                                        name_number = Order.getString("name");
+                                    }
+
+                                }
+
+                            }
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("VOLLEY", "ERROR");
+
+                        // Handle network related Errors
+                        if (error.networkResponse == null) {
+
+                            // Handle network Timeout error
+                            if (error.getClass().equals(TimeoutError.class)) {
+                                Toast.makeText(getApplicationContext(),
+                                        "Request Timeout Error!", Toast.LENGTH_LONG)
+                                        .show();
+                            } else {
+                                Toast.makeText(getApplicationContext(),
+                                        "Network Error. No Internet Connection", Toast.LENGTH_LONG)
+                                        .show();
+                            }
+                        }
+                        return;
+                    }
+                });
+
+
+        // Send the JSON request
+        JSONVolleyController.getInstance().addToRequestQueue(JsonObjectR);
+
+        return customers_list;
     }
 
 }
