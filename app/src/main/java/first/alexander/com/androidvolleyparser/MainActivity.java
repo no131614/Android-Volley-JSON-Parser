@@ -8,10 +8,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
@@ -19,6 +22,8 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import static java.security.AccessController.getContext;
 
 public class MainActivity extends AppCompatActivity {
     TextView textViewResult;
@@ -31,6 +36,8 @@ public class MainActivity extends AppCompatActivity {
     String name_number = null;
 
     RequestQueue requestQueue;
+
+    final int JSON_TIME_OUT = 15000; //Set JSON Request Connection Timeout
 
     int bronze_bag_count = 0;
     double total_price_amount = 0;
@@ -66,7 +73,6 @@ public class MainActivity extends AppCompatActivity {
     private void JSONRequestNumOfItems(String item) {
 
         final String ITEM_NAME = item;
-        progressBar.setVisibility(View.VISIBLE);
 
         JsonObjectRequest JsonObjectR = new JsonObjectRequest
                 (Request.Method.GET, URL, null, new Response.Listener<JSONObject>() {
@@ -126,8 +132,27 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Log.e("VOLLEY", "ERROR");
+
+                        // Handle network related Errors
+                        if (error.networkResponse == null) {
+
+                            // Handle network Timeout error
+                            if (error.getClass().equals(TimeoutError.class)) {
+                                Toast.makeText(getApplicationContext(),
+                                        "Request Timeout Error!", Toast.LENGTH_LONG)
+                                        .show();
+                            } else {
+                                Toast.makeText(getApplicationContext(),
+                                        "Network Error. No Internet Connection", Toast.LENGTH_LONG)
+                                        .show();
+                            }
+                        }
+                        return;
                     }
                 });
+
+        JsonObjectR.setRetryPolicy(new DefaultRetryPolicy(JSON_TIME_OUT,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
         // Send the JSON request
         JSONVolleyController.getInstance().addToRequestQueue(JsonObjectR);
@@ -189,7 +214,6 @@ public class MainActivity extends AppCompatActivity {
                             textViewResult.append(FIRST_NAME + " " + LAST_NAME + " Total Cost :" +
                                     String.format("%.2f", total_price_amount));
                             textViewResult.append(" \n");
-                            progressBar.setVisibility(View.GONE);
 
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -201,8 +225,27 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Log.e("VOLLEY", "ERROR");
+
+                        // Handle network related Errors
+                        if (error.networkResponse == null) {
+
+                            // Handle network Timeout error
+                            if (error.getClass().equals(TimeoutError.class)) {
+                                Toast.makeText(getApplicationContext(),
+                                        "Request Timeout Error!", Toast.LENGTH_LONG)
+                                        .show();
+                            } else {
+                                Toast.makeText(getApplicationContext(),
+                                        "Network Error. No Internet Connection", Toast.LENGTH_LONG)
+                                        .show();
+                            }
+                        }
+                        return;
                     }
                 });
+
+        JsonObjectR.setRetryPolicy(new DefaultRetryPolicy(JSON_TIME_OUT,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
         // Send the JSON request
         JSONVolleyController.getInstance().addToRequestQueue(JsonObjectR);
