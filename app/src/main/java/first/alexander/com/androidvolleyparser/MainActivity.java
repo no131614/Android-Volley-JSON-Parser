@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
 
     final int JSON_TIME_OUT = 15000; //Set JSON Request Connection Timeout
 
-    int bronze_bag_count = 0;
+    int item_count = 0;
     double total_price_amount = 0;
 
     @Override
@@ -68,11 +68,9 @@ public class MainActivity extends AppCompatActivity {
                 //JSONRequestNumOfItems("Awesome Bronze Bag");
                 //JSONRequestTotalPrice("Napoleon", "Batz");
                 //JSONRequestGetCustomers();
-                //JSONRequestGetProducts();
-                Map customer_info = new HashMap();
-
-
+                JSONRequestGetProducts();
                 JSONRequestGetCustomerInfo("Napoleon", "Batz");
+                JSONRequestGetItemInfo("Awesome Bronze Bag");
 
             }
         });
@@ -93,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
                         try {
 
                             //Reset Amount
-                            bronze_bag_count = 0;
+                            item_count = 0;
 
                             // Get the Order JSON Array
                             JSONArray OrderArray = response.getJSONArray("orders");
@@ -120,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
                                         String item_title = Item.getString("title");
 
                                         if (item_title.equals(ITEM_NAME)) {
-                                            bronze_bag_count += Item.getInt("quantity");
+                                            item_count += Item.getInt("quantity");
                                         }
 
                                     }
@@ -129,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
 
                             }
 
-                            textViewResult.append("Number of bronze bags :" + bronze_bag_count);
+                            textViewResult.append("Number of bronze bags :" + item_count);
                             textViewResult.append(" \n");
 
                         } catch (Exception e) {
@@ -381,6 +379,7 @@ public class MainActivity extends AppCompatActivity {
                                         // Check for duplicates and add the name into the list
                                         if (!product_list.contains(item_title)) {
                                             product_list.add(item_title);
+                                            System.out.println(item_title);
                                         }
 
                                     }
@@ -526,6 +525,105 @@ public class MainActivity extends AppCompatActivity {
         JSONVolleyController.getInstance().addToRequestQueue(JsonObjectR);
 
         return customer_info;
+    }
+
+    private Map JSONRequestGetItemInfo(String item) {
+
+        final String ITEM_NAME  = item;
+  
+
+        // Map will contain item info
+        final Map item_info = new HashMap();
+
+        JsonObjectRequest JsonObjectR = new JsonObjectRequest
+                (Request.Method.GET, URL, null, new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+
+                        try {
+                            
+                            // Get the Order JSON Array
+                            JSONArray OrderArray = response.getJSONArray("orders");
+
+                            // Tracing trough the Order array
+                            for (int order_index = 0; order_index < OrderArray.length(); order_index++) {
+
+                                // Get an order
+                                JSONObject Order = OrderArray.getJSONObject(order_index);
+
+                                // Make sure order is not cancelled
+                                if (Order.getString("cancel_reason").equals("null")) {
+
+                                    // Get a line items array from an order
+                                    JSONArray line_itemsArray = Order.getJSONArray("line_items");
+
+                                    // Tracing trough the line items array
+                                    for (int line_index = 0; line_index < line_itemsArray.length(); line_index++) {
+
+                                        // Get a line item
+                                        JSONObject Item = line_itemsArray.getJSONObject(line_index);
+
+                                        // Get the item title
+                                        String item_title = Item.getString("title");
+
+                                        if (item_title.equals(ITEM_NAME)) {
+                                            item_count += Item.getInt("quantity");
+                                            item_info.put("item_count",item_count);
+                                            item_info.put("product_id",Item.getString("product_id"));
+                                            item_info.put("price",Item.getString("price"));
+                                            item_info.put("variant_title",Item.getString("variant_title"));
+                                            item_info.put("grams",Item.getString("grams"));
+                                            item_info.put("vendor",Item.getString("vendor"));
+
+                                        }
+
+                                    }
+                                }
+                            }
+
+                            System.out.println("Item product id: " + item_info.get("product_id"));
+                            System.out.println("Item price: " + item_info.get("price"));
+                            System.out.println("Item variant title: " + item_info.get("variant_title"));
+                            System.out.println("Item grams: " + item_info.get("grams"));
+                            System.out.println("Item vendor: " + item_info.get("vendor"));
+                            System.out.println("Item count: " + item_info.get("item_count"));
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("VOLLEY", "ERROR");
+
+                        // Handle network related Errors
+                        if (error.networkResponse == null) {
+
+                            // Handle network Timeout error
+                            if (error.getClass().equals(TimeoutError.class)) {
+                                Toast.makeText(getApplicationContext(),
+                                        "Request Timeout Error!", Toast.LENGTH_LONG)
+                                        .show();
+                            } else {
+                                Toast.makeText(getApplicationContext(),
+                                        "Network Error. No Internet Connection", Toast.LENGTH_LONG)
+                                        .show();
+                            }
+                        }
+                    }
+                });
+
+        JsonObjectR.setRetryPolicy(new DefaultRetryPolicy(JSON_TIME_OUT,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+        // Send the JSON request
+        JSONVolleyController.getInstance().addToRequestQueue(JsonObjectR);
+
+        return item_info;
     }
 
 
