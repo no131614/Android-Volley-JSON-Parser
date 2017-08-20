@@ -3,7 +3,6 @@ package first.alexander.com.androidvolleyparser;
 import android.app.Activity;
 import android.app.ListFragment;
 import android.os.Bundle;
-import android.support.v7.util.AsyncListUtil;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,19 +17,19 @@ import com.android.volley.Response;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.RequestFuture;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 
 public class CustomerInfoFragment extends ListFragment{
 
-    ListFragmentItemClickListener ItemClickListener;
+    ListFragmentItemClickListener ifaceItemClickListener;
 
     final String URL = "https://shopicruit.myshopify.com/admin/orders.json?page=1&access_token=c32313df0d0ef512ca64d5b336a0d7c6";
     final int JSON_TIME_OUT = 15000; //Set JSON Request Connection Timeout
@@ -41,6 +40,17 @@ public class CustomerInfoFragment extends ListFragment{
         void onListFragmentItemClick(int position);
     }
 
+    /** A callback function, executed when this fragment is attached to an activity */
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try{
+            /** This statement ensures that the hosting activity implements ListFragmentItemClickListener */
+            ifaceItemClickListener = (ListFragmentItemClickListener) activity;
+        }catch(Exception e){
+            Toast.makeText(activity.getBaseContext(), "Exception",Toast.LENGTH_SHORT).show();
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -61,7 +71,7 @@ public class CustomerInfoFragment extends ListFragment{
     public void onListItemClick(ListView l, View v, int position, long id) {
 
         /** Invokes the implementation of the method onListFragmentItemClick in the hosting activity */
-        //ItemClickListener.onListFragmentItemClick(position);
+        ifaceItemClickListener.onListFragmentItemClick(position);
 
     }
 
@@ -118,6 +128,14 @@ public class CustomerInfoFragment extends ListFragment{
 
                             }
 
+                            // Sort customer by first name
+                            Collections.sort(customers_list, new Comparator<String>() {
+                                @Override
+                                public int compare(String s1, String s2) {
+                                    return s1.compareToIgnoreCase(s2);
+                                }
+                            });
+
                             final_adapter.clear();
                             final_adapter.addAll(customers_list);
                             final_adapter.notifyDataSetChanged();
@@ -138,13 +156,9 @@ public class CustomerInfoFragment extends ListFragment{
 
                             // Handle network Timeout error
                             if (error.getClass().equals(TimeoutError.class)) {
-                                /*Toast.makeText(getApplicationContext(),
-                                        "Request Timeout Error!", Toast.LENGTH_LONG)
-                                        .show();*/
+                                Toast.makeText(getActivity(),"Request Timeout Error!",Toast.LENGTH_SHORT).show();
                             } else {
-                               /* Toast.makeText(getApplicationContext(),
-                                        "Network Error. No Internet Connection", Toast.LENGTH_LONG)
-                                        .show();*/
+                                Toast.makeText(getActivity(),"Network Error. No Internet Connection!",Toast.LENGTH_SHORT).show();
                             }
                         }
                     }
