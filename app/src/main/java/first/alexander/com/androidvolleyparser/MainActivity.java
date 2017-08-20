@@ -1,7 +1,5 @@
 package first.alexander.com.androidvolleyparser;
 
-import first.alexander.com.androidvolleyparser.CustomerDetailsFragment;
-
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -93,21 +91,21 @@ public class MainActivity extends AppCompatActivity implements CustomerInfoFragm
             /** Getting the fragment manager for fragment related operations */
             FragmentManager fragmentManager = getFragmentManager();
 
-            /** Getting the fragmenttransaction object, which can be used to add, remove or replace a fragment */
+            /** Getting the fragment transaction object, which can be used to add, remove or replace a fragment */
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
             /** Getting the existing detailed fragment object, if it already exists.
              *  The fragment object is retrieved by its tag name
              * */
-            Fragment prevFrag = fragmentManager.findFragmentByTag("first.alexander.com.first.alexander.com.androidvolleyparser.customer.details.fragment");
+            Fragment prevFrag = fragmentManager.findFragmentById(R.id.detail_fragment_container);
 
             /** Remove the existing detailed fragment object if it exists */
             if(prevFrag!=null) {
                 fragmentTransaction.remove(prevFrag);
             }
 
-            /** Instantiating the fragment CountryDetailsFragment */
-            CustomerDetailsFragment fragment = new CustomerDetailsFragment();
+            /** Instantiating the fragment CustomerDetailsFragment */
+            CustomerDetailsFragment customerDetailsFragment = new CustomerDetailsFragment();
 
             /** Creating a bundle object to pass the data(the clicked item's position) from the activity to the fragment */
             Bundle b = new Bundle();
@@ -116,12 +114,12 @@ public class MainActivity extends AppCompatActivity implements CustomerInfoFragm
             b.putInt("position", position);
 
             /** Setting the bundle object to the fragment */
-            fragment.setArguments(b);
+            customerDetailsFragment.setArguments(b);
 
             /** Adding the fragment to the fragment transaction */
-            fragmentTransaction.add(R.id.detail_fragment_container, fragment,"first.alexander.com.androidvolleyparser.customer.details.fragment");
+            fragmentTransaction.add(R.id.detail_fragment_container, customerDetailsFragment);
 
-            /** Adding this transaction to backstack */
+            /** Adding this transaction to back stack */
             fragmentTransaction.addToBackStack(null);
 
             /** Making this transaction in effect */

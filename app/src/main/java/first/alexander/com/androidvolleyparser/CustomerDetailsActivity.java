@@ -1,5 +1,6 @@
 package first.alexander.com.androidvolleyparser;
 
+import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -19,8 +20,17 @@ public class CustomerDetailsActivity extends AppCompatActivity {
         /** Getting the fragment manager for fragment related operations */
         FragmentManager fragmentManager = getFragmentManager();
 
-        /** Getting the fragmenttransaction object, which can be used to add, remove or replace a fragment */
+        /** Getting the fragment transaction object, which can be used to add, remove or replace a fragment */
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+///////////////// Need To Delete previous fragment !!!!
+        Fragment prevFrag = fragmentManager.findFragmentById(R.id.customer_details_fragment_container);
+
+        /** Remove the existing detailed fragment object if it exists */
+        if(prevFrag!=null) {
+            fragmentTransaction.remove(prevFrag);
+        }
+/////////////////
 
         /** Instantiating the fragment CountryDetailsFragment */
         CustomerDetailsFragment detailsFragment = new CustomerDetailsFragment();
