@@ -37,7 +37,7 @@ public class CustomerInfoFragment extends ListFragment{
     /** An interface for defining the callback method */
     public interface ListFragmentItemClickListener {
         /** This method will be invoked when an item in the ListFragment is clicked */
-        void onListFragmentItemClick(int position);
+        void onListFragmentItemClick(String name);
     }
 
     /** A callback function, executed when this fragment is attached to an activity */
@@ -71,7 +71,7 @@ public class CustomerInfoFragment extends ListFragment{
     public void onListItemClick(ListView l, View v, int position, long id) {
 
         /** Invokes the implementation of the method onListFragmentItemClick in the hosting activity */
-        ifaceItemClickListener.onListFragmentItemClick(position);
+        ifaceItemClickListener.onListFragmentItemClick(l.getItemAtPosition(position).toString());
 
     }
 

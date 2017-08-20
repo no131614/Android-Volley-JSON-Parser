@@ -39,7 +39,7 @@ public class CustomerDetailsActivity extends AppCompatActivity {
         Bundle b = new Bundle();
 
         /** Setting the data to the bundle object from the Intent*/
-        b.putInt("position", getIntent().getIntExtra("position", 0));
+        b.putString("name", getIntent().getStringExtra("name"));
 
         /** Setting the bundle object to the fragment */
         detailsFragment.setArguments(b);

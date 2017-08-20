@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity implements CustomerInfoFragm
 
     /** This method will be executed when the user clicks on an item in the listview */
     @Override
-    public void onListFragmentItemClick(int position) {
+    public void onListFragmentItemClick(String name) {
 
         /** Getting the orientation ( Landscape or Portrait ) of the screen */
         int orientation = getResources().getConfiguration().orientation;
@@ -111,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements CustomerInfoFragm
             Bundle b = new Bundle();
 
             /** Setting the data to the bundle object */
-            b.putInt("position", position);
+            b.putString("name", name);
 
             /** Setting the bundle object to the fragment */
             customerDetailsFragment.setArguments(b);
@@ -131,7 +131,7 @@ public class MainActivity extends AppCompatActivity implements CustomerInfoFragm
             Intent intent = new Intent(this, CustomerDetailsActivity.class);
 
             /** Setting data ( the clicked item's position ) to this intent */
-            intent.putExtra("position", position);
+            intent.putExtra("name", name);
 
             /** Starting the activity by passing the implicit intent */
             startActivity(intent);
