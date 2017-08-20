@@ -1,26 +1,21 @@
 package first.alexander.com.androidvolleyparser;
 
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
-import android.widget.ProgressBar;
+import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,19 +24,17 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import android.app.TabActivity;
 
 
-public class MainActivity extends AppCompatActivity implements CustomerInfoFragment.ListFragmentItemClickListener {
+public class MainActivity extends AppCompatActivity {
     TextView textViewResult;
-
-    Button buttonStart;
-
-    ProgressBar progressBar;
 
     final String URL = "https://shopicruit.myshopify.com/admin/orders.json?page=1&access_token=c32313df0d0ef512ca64d5b336a0d7c6";
     String name_number = null;
 
-    RequestQueue requestQueue;
+    Button buttonStart;
+
 
     final int JSON_TIME_OUT = 15000; //Set JSON Request Connection Timeout
 
@@ -53,91 +46,23 @@ public class MainActivity extends AppCompatActivity implements CustomerInfoFragm
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Creates the Volley request queue
-        requestQueue = Volley.newRequestQueue(this);
 
-     /*   textViewResult = (TextView) findViewById(R.id.textViewResult);
-
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        progressBar.setVisibility(View.GONE);
 
         buttonStart = (Button) findViewById(R.id.buttonStart);
         buttonStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                textViewResult.setText(null);
-
-                //JSONRequestNumOfItems("Awesome Bronze Bag");
-                //JSONRequestTotalPrice("Napoleon", "Batz");
-                //JSONRequestGetCustomers();
-                JSONRequestGetProducts();
-                JSONRequestGetCustomerInfo("Napoleon", "Batz");
-                JSONRequestGetItemInfo("Awesome Bronze Bag");
-
-            }
-        });*/
-
-    }
-
-    /** This method will be executed when the user clicks on an item in the listview */
-    @Override
-    public void onListFragmentItemClick(String name) {
-
-        /** Getting the orientation ( Landscape or Portrait ) of the screen */
-        int orientation = getResources().getConfiguration().orientation;
-
-        /** Landscape Mode */
-        if(orientation == Configuration.ORIENTATION_LANDSCAPE ){
-            /** Getting the fragment manager for fragment related operations */
-            FragmentManager fragmentManager = getFragmentManager();
-
-            /** Getting the fragment transaction object, which can be used to add, remove or replace a fragment */
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-            /** Getting the existing detailed fragment object, if it already exists.
-             *  The fragment object is retrieved by its tag name
-             * */
-            Fragment prevFrag = fragmentManager.findFragmentById(R.id.detail_fragment_container);
-
-            /** Remove the existing detailed fragment object if it exists */
-            if(prevFrag!=null) {
-                fragmentTransaction.remove(prevFrag);
+                Intent customer_intent = new Intent(v.getContext(), CustomerActivity.class);
+                startActivity(customer_intent);
             }
 
-            /** Instantiating the fragment CustomerDetailsFragment */
-            CustomerDetailsFragment customerDetailsFragment = new CustomerDetailsFragment();
+        });
 
-            /** Creating a bundle object to pass the data(the clicked item's position) from the activity to the fragment */
-            Bundle b = new Bundle();
 
-            /** Setting the data to the bundle object */
-            b.putString("name", name);
 
-            /** Setting the bundle object to the fragment */
-            customerDetailsFragment.setArguments(b);
 
-            /** Adding the fragment to the fragment transaction */
-            fragmentTransaction.add(R.id.detail_fragment_container, customerDetailsFragment);
 
-            /** Adding this transaction to back stack */
-            fragmentTransaction.addToBackStack(null);
-
-            /** Making this transaction in effect */
-            fragmentTransaction.commit();
-
-        }else{
-            /** Portrait Mode or Square mode */
-            /** Creating an intent object to start the CountryDetailsActivity */
-            Intent intent = new Intent(this, CustomerDetailsActivity.class);
-
-            /** Setting data ( the clicked item's position ) to this intent */
-            intent.putExtra("name", name);
-
-            /** Starting the activity by passing the implicit intent */
-            startActivity(intent);
-        }
     }
-
 
 
     private void JSONRequestNumOfItems(String item) {
