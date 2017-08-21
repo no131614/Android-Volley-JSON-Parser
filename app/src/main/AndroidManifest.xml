@@ -13,7 +13,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity
+            android:name=".MainActivity"
+            android:label="Dashboard">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -21,7 +23,11 @@
             </intent-filter>
         </activity>
         <activity android:name=".CustomerDetailsActivity" />
-        <activity android:name=".CustomerActivity"></activity>
+        <activity
+            android:name=".CustomerActivity"
+            android:icon="@drawable/customer"
+            android:label="Customer Information" />
+        <activity android:name=".ItemActivity"></activity>
     </application>
 
 </manifest>
