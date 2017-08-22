@@ -54,13 +54,12 @@ public class CustomerDetailsFragment extends Fragment {
 
         // Begin: Parse first name and last name
         String lastName = "";
-        String firstName= "";
-        if(name.split("\\w+").length>1){
+        String firstName = "";
+        if (name.split("\\w+").length > 1) {
 
-            lastName = name.substring(name.lastIndexOf(" ")+1);
+            lastName = name.substring(name.lastIndexOf(" ") + 1);
             firstName = name.substring(0, name.lastIndexOf(' '));
-        }
-        else{
+        } else {
             firstName = name;
         }
 
@@ -75,8 +74,6 @@ public class CustomerDetailsFragment extends Fragment {
 
                     @Override
                     public void onResponse(JSONObject response) {
-
-                        boolean no_details = false;
 
                         try {
 
@@ -97,7 +94,7 @@ public class CustomerDetailsFragment extends Fragment {
 
                                     // Get customer info
                                     try {
-                                        JSONObject Customer = Order.getJSONObject("customer");// Customer might not exist
+                                        JSONObject Customer = Order.getJSONObject("customer");// Customer info might not exist
 
 
                                         String first_name = Customer.getString("first_name");
@@ -106,36 +103,32 @@ public class CustomerDetailsFragment extends Fragment {
 
                                             // Begin: Get customer info and put on map
                                             total_price_amount += Order.getDouble("total_price");
-                                            customer_info.put("total_price",total_price_amount);
-                                            customer_info.put("id",Customer.getString("id"));
-                                            customer_info.put("email",Customer.getString("email"));
-                                            customer_info.put("phone",Customer.getString("phone"));
-                                            customer_info.put("note",Customer.getString("note"));
-                                            customer_info.put("total_spent",Customer.getString("total_spent"));
+                                            customer_info.put("total_price", total_price_amount);
+                                            customer_info.put("id", Customer.getString("id"));
+                                            customer_info.put("email", Customer.getString("email"));
+                                            customer_info.put("phone", Customer.getString("phone"));
+                                            customer_info.put("note", Customer.getString("note"));
+                                            customer_info.put("total_spent", Customer.getString("total_spent"));
                                             // End: Get customer info and put on map
 
                                         }
 
                                     } catch (JSONException JE) {
-                                        //no_details = true;
+                                        // Need to catch error if no customer info field
                                     }
                                 }
                             }
 
-                            if(no_details){
-                                textView.setText("No details regarding this customer");
-                            }
-                            else {
-                                textView.setText(null);
-                                textView.append(" \n First Name: " + FIRST_NAME);
-                                textView.append(" \n Last Name: " + LAST_NAME);
-                                textView.append(" \n ID: " + customer_info.get("id"));
-                                textView.append(" \n Email: " + customer_info.get("email"));
-                                textView.append(" \n Phone: " + customer_info.get("phone"));
-                                textView.append(" \n Note: "+ customer_info.get("note"));
-                                textView.append(" \n Total price: " + customer_info.get("total_price"));
-                                textView.append(" \n Total spent: " + customer_info.get("total_spent"));
-                            }
+                            textView.setText(null);
+                            textView.append(" \n First Name: " + FIRST_NAME);
+                            textView.append(" \n Last Name: " + LAST_NAME);
+                            textView.append(" \n ID: " + customer_info.get("id"));
+                            textView.append(" \n Email: " + customer_info.get("email"));
+                            textView.append(" \n Phone: " + customer_info.get("phone"));
+                            textView.append(" \n Note: " + customer_info.get("note"));
+                            textView.append(" \n Total price : " +
+                                    String.format("%.2f", customer_info.get("total_price")) + " CAD");
+                            textView.append(" \n Total spent: " + customer_info.get("total_spent"));
 
 
                         } catch (Exception e) {
@@ -154,9 +147,9 @@ public class CustomerDetailsFragment extends Fragment {
 
                             // Handle network Timeout error
                             if (error.getClass().equals(TimeoutError.class)) {
-                                Toast.makeText(getActivity(),"Request Timeout Error!",Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getActivity(), "Request Timeout Error!", Toast.LENGTH_SHORT).show();
                             } else {
-                                Toast.makeText(getActivity(),"Network Error. No Internet Connection!",Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getActivity(), "Network Error. No Internet Connection!", Toast.LENGTH_SHORT).show();
                             }
                         }
                     }
@@ -169,7 +162,6 @@ public class CustomerDetailsFragment extends Fragment {
         JSONVolleyController.getInstance().addToRequestQueue(JsonObjectR);
 
     }
-
 
 
 }

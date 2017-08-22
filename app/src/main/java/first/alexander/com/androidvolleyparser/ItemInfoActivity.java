@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import android.app.Activity;
+import java.util.Map;
+
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
@@ -12,13 +13,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.TimeoutError;
@@ -33,6 +33,8 @@ public class ItemInfoActivity extends AppCompatActivity {
     // All static variables
     final String URL = "https://shopicruit.myshopify.com/admin/orders.json?page=1&access_token=c32313df0d0ef512ca64d5b336a0d7c6";
 
+    final int JSON_TIME_OUT = 15000; //Set JSON Request Connection Timeout
+
     final Context context = this;
 
     ListView list;
@@ -46,7 +48,7 @@ public class ItemInfoActivity extends AppCompatActivity {
 
         ItemInfoListAdapter adapter = new ItemInfoListAdapter(ItemInfoActivity.this, itemList);
         JSONRequestGetProducts(adapter);
-        list=(ListView)findViewById(R.id.item_listView);
+        list = (ListView) findViewById(R.id.item_listView);
         list.setAdapter(adapter);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -59,11 +61,11 @@ public class ItemInfoActivity extends AppCompatActivity {
                 dialog.setTitle("Product Item Info");
 
                 // set the custom dialog components - text, image and button
-                TextView text = (TextView) dialog.findViewById(R.id.item_TextViewDialog);
-                text.setText("Android custom dialog example!");
+                TextView textView = (TextView) dialog.findViewById(R.id.item_TextViewDialog);
+
+                JSONRequestGetItemInfo(parent.getItemAtPosition(position).toString(), textView);
 
                 Button buttonClose = (Button) dialog.findViewById(R.id.buttonClose);
-                // if button is clicked, close the custom dialog
                 buttonClose.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -166,10 +168,116 @@ public class ItemInfoActivity extends AppCompatActivity {
                                         .show();
                             }
                         }
-                        return;
                     }
                 });
 
+        JsonObjectR.setRetryPolicy(new DefaultRetryPolicy(JSON_TIME_OUT,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+
+        // Send the JSON request
+        JSONVolleyController.getInstance().addToRequestQueue(JsonObjectR);
+    }
+
+    private void JSONRequestGetItemInfo(String item, final TextView textView) {
+
+        final String ITEM_NAME = item;
+
+        final Map item_info = new HashMap();
+
+        JsonObjectRequest JsonObjectR = new JsonObjectRequest
+                (Request.Method.GET, URL, null, new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+
+                        try {
+
+                            //Reset Amount
+                            int item_count = 0;
+                            double total_price = 0;
+
+                            // Get the Order JSON Array
+                            JSONArray OrderArray = response.getJSONArray("orders");
+
+                            // Tracing trough the Order array
+                            for (int order_index = 0; order_index < OrderArray.length(); order_index++) {
+
+                                // Get an order
+                                JSONObject Order = OrderArray.getJSONObject(order_index);
+
+                                // Make sure order is not cancelled
+                                if (Order.getString("cancel_reason").equals("null")) {
+
+                                    // Get a line items array from an order
+                                    JSONArray line_itemsArray = Order.getJSONArray("line_items");
+
+                                    // Tracing trough the line items array
+                                    for (int line_index = 0; line_index < line_itemsArray.length(); line_index++) {
+
+                                        // Get a line item
+                                        JSONObject Item = line_itemsArray.getJSONObject(line_index);
+
+                                        // Get the item title
+                                        String item_title = Item.getString("title");
+
+                                        if (item_title.equals(ITEM_NAME)) {
+
+                                            // Begin: Get item info and put on map
+                                            item_count += Item.getInt("quantity");
+                                            total_price += (Item.getDouble("price") * Item.getInt("quantity"));
+
+                                            item_info.put("item_count", item_count);
+                                            item_info.put("product_id", Item.getString("product_id"));
+                                            item_info.put("total_price", total_price);
+                                            // End: Get customer info and put on map
+
+
+                                        }
+
+                                    }
+
+                                }
+
+                            }
+
+                            textView.setText(null);
+                            textView.append(" \n Product Name :" + ITEM_NAME);
+                            textView.append(" \n Product ID :" + item_info.get("product_id"));
+                            textView.append(" \n Number of Items Sold :" + item_info.get("item_count"));
+                            textView.append(" \n Total Price :" +
+                                    String.format("%.2f", item_info.get("total_price")) + " CAD");
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("VOLLEY", "ERROR");
+
+                        // Handle network related Errors
+                        if (error.networkResponse == null) {
+
+                            // Handle network Timeout error
+                            if (error.getClass().equals(TimeoutError.class)) {
+                                Toast.makeText(getApplicationContext(),
+                                        "Request Timeout Error!", Toast.LENGTH_LONG)
+                                        .show();
+                            } else {
+                                Toast.makeText(getApplicationContext(),
+                                        "Network Error. No Internet Connection", Toast.LENGTH_LONG)
+                                        .show();
+                            }
+                        }
+                    }
+                });
+
+        JsonObjectR.setRetryPolicy(new DefaultRetryPolicy(JSON_TIME_OUT,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
         // Send the JSON request
         JSONVolleyController.getInstance().addToRequestQueue(JsonObjectR);
