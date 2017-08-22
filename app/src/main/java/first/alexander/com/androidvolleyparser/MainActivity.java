@@ -34,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     String name_number = null;
 
     Button buttonStart;
+    Button buttonStart2;
 
 
     final int JSON_TIME_OUT = 15000; //Set JSON Request Connection Timeout
@@ -53,6 +54,16 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent customer_intent = new Intent(v.getContext(), CustomerActivity.class);
+                startActivity(customer_intent);
+            }
+
+        });
+
+        buttonStart2 = (Button) findViewById(R.id.buttonStart2);
+        buttonStart2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent customer_intent = new Intent(v.getContext(), ItemInfoActivity.class);
                 startActivity(customer_intent);
             }
 
