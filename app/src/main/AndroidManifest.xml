@@ -30,7 +30,6 @@
             android:name=".CustomerActivity"
             android:icon="@drawable/customer"
             android:label="Customer Information" />
-        <activity android:name=".ItemActivity"></activity>
 
     </application>
 
