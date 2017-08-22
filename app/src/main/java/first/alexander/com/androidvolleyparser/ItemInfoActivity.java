@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -182,7 +183,6 @@ public class ItemInfoActivity extends AppCompatActivity {
     private void JSONRequestGetItemInfo(String item, final TextView textView) {
 
         final String ITEM_NAME = item;
-
         final Map item_info = new HashMap();
 
         JsonObjectRequest JsonObjectR = new JsonObjectRequest

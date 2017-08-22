@@ -1,11 +1,14 @@
 package first.alexander.com.androidvolleyparser;
 
 import android.content.Intent;
+import android.media.Image;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,27 +34,28 @@ public class MainActivity extends AppCompatActivity {
     final String URL = "https://shopicruit.myshopify.com/admin/orders.json?page=1&access_token=c32313df0d0ef512ca64d5b336a0d7c6";
     String name_number = null;
 
-    Button buttonStart;
-    Button buttonStart2;
+    ImageButton imageButtonCustomerInfo;
+    ImageButton imageButtonItemInfo;
 
     int item_count = 0;
     double total_price_amount = 0;
 
-
     final int JSON_TIME_OUT = 15000; //Set JSON Request Connection Timeout
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Test
-        JSONRequestTotalNumOfItems();
-        JSONRequestGetFavouriteCustomer();
+        TextView tvNumItems = (TextView) findViewById(R.id.textViewTotalNumItems);
+        TextView tvPriceAmount = (TextView) findViewById(R.id.textViewTotalPriceAmount);
+        TextView tvFavCustomer = (TextView) findViewById(R.id.textViewFavouriteCustomer);
 
-        buttonStart = (Button) findViewById(R.id.buttonStart);
-        buttonStart.setOnClickListener(new View.OnClickListener() {
+        JSONRequestTotalNumOfItems(tvPriceAmount,tvNumItems);
+        JSONRequestGetFavouriteCustomer(tvFavCustomer);
+
+        imageButtonCustomerInfo = (ImageButton) findViewById(R.id.imageButtonCustomerInfo);
+        imageButtonCustomerInfo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent customer_intent = new Intent(v.getContext(), CustomerActivity.class);
@@ -60,8 +64,8 @@ public class MainActivity extends AppCompatActivity {
 
         });
 
-        buttonStart2 = (Button) findViewById(R.id.buttonStart2);
-        buttonStart2.setOnClickListener(new View.OnClickListener() {
+        imageButtonItemInfo = (ImageButton) findViewById(R.id.imageButtonItemInfo);
+        imageButtonItemInfo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent customer_intent = new Intent(v.getContext(), ItemInfoActivity.class);
@@ -70,12 +74,10 @@ public class MainActivity extends AppCompatActivity {
 
         });
 
-
     }
 
     // Total number of items and total price
-    private void JSONRequestTotalNumOfItems() {
-
+    private void JSONRequestTotalNumOfItems(final TextView tvPrice, final TextView tvItem) {
 
         JsonObjectRequest JsonObjectR = new JsonObjectRequest
                 (Request.Method.GET, URL, null, new Response.Listener<JSONObject>() {
@@ -119,9 +121,10 @@ public class MainActivity extends AppCompatActivity {
 
                             }
 
-                            System.out.println("Total Items Sold :" + item_count);
-                            System.out.println("Total Price Amount :" +
-                                    String.format("%.2f", total_price_amount));
+                            tvItem.setText(null);
+                            tvItem.append("" + item_count);
+                            tvPrice.setText(null);
+                            tvPrice.append(String.format("%.2f", total_price_amount));
 
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -159,10 +162,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //Favourite Customer base on total spent
-    private void JSONRequestGetFavouriteCustomer() {
+    private void JSONRequestGetFavouriteCustomer(final TextView tvFavCustomer) {
 
-        // Map will contain customer info
-        final Map customer_info = new HashMap();
 
         JsonObjectRequest JsonObjectR = new JsonObjectRequest
                 (Request.Method.GET, URL, null, new Response.Listener<JSONObject>() {
@@ -209,7 +210,8 @@ public class MainActivity extends AppCompatActivity {
                                 }
                             }
 
-                            System.out.println("Favourite Customer :" + favourite_customer);
+                            tvFavCustomer.setText(null);
+                            tvFavCustomer.append(favourite_customer);
                             System.out.println("Largest Total Spent :" + largest_total_spent);
 
                         } catch (Exception e) {
