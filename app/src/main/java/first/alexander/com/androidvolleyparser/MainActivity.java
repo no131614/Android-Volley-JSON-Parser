@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,7 +23,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import android.app.TabActivity;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -36,18 +34,21 @@ public class MainActivity extends AppCompatActivity {
     Button buttonStart;
     Button buttonStart2;
 
+    int item_count = 0;
+    double total_price_amount = 0;
+
 
     final int JSON_TIME_OUT = 15000; //Set JSON Request Connection Timeout
 
-    int item_count = 0;
-    double total_price_amount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
+        // Test
+        JSONRequestTotalNumOfItems();
+        JSONRequestGetFavouriteCustomer();
 
         buttonStart = (Button) findViewById(R.id.buttonStart);
         buttonStart.setOnClickListener(new View.OnClickListener() {
@@ -70,15 +71,11 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-
-
-
     }
 
+    // Total number of items and total price
+    private void JSONRequestTotalNumOfItems() {
 
-    private void JSONRequestNumOfItems(String item) {
-
-        final String ITEM_NAME = item;
 
         JsonObjectRequest JsonObjectR = new JsonObjectRequest
                 (Request.Method.GET, URL, null, new Response.Listener<JSONObject>() {
@@ -89,7 +86,8 @@ public class MainActivity extends AppCompatActivity {
                         try {
 
                             //Reset Amount
-                            item_count = 0;
+                            int item_count = 0;
+                            double total_price_amount = 0;
 
                             // Get the Order JSON Array
                             JSONArray OrderArray = response.getJSONArray("orders");
@@ -112,21 +110,18 @@ public class MainActivity extends AppCompatActivity {
                                         // Get a line item
                                         JSONObject Item = line_itemsArray.getJSONObject(line_index);
 
-                                        // Get the item title
-                                        String item_title = Item.getString("title");
-
-                                        if (item_title.equals(ITEM_NAME)) {
-                                            item_count += Item.getInt("quantity");
-                                        }
-
+                                        item_count += Item.getInt("quantity");
                                     }
+
+                                    total_price_amount += Order.getDouble("total_price");
 
                                 }
 
                             }
 
-                            textViewResult.append("Number of bronze bags :" + item_count);
-                            textViewResult.append(" \n");
+                            System.out.println("Total Items Sold :" + item_count);
+                            System.out.println("Total Price Amount :" +
+                                    String.format("%.2f", total_price_amount));
 
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -161,6 +156,97 @@ public class MainActivity extends AppCompatActivity {
 
         // Send the JSON request
         JSONVolleyController.getInstance().addToRequestQueue(JsonObjectR);
+    }
+
+    //Favourite Customer base on total spent
+    private void JSONRequestGetFavouriteCustomer() {
+
+        // Map will contain customer info
+        final Map customer_info = new HashMap();
+
+        JsonObjectRequest JsonObjectR = new JsonObjectRequest
+                (Request.Method.GET, URL, null, new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+
+                        try {
+
+                            // Reset fields
+                            double largest_total_spent = 0;
+                            String favourite_customer = "Currently No One";
+
+                            // Get the Order JSON Array
+                            JSONArray OrderArray = response.getJSONArray("orders");
+
+                            // Tracing trough the Order array
+                            for (int order_index = 0; order_index < OrderArray.length(); order_index++) {
+
+                                // Get an order
+                                JSONObject Order = OrderArray.getJSONObject(order_index);
+
+                                // Make sure order is not cancelled
+                                if (Order.getString("cancel_reason").equals("null")) {
+
+                                    // Get customer info
+                                    try {
+                                        JSONObject Customer = Order.getJSONObject("customer");// Customer object might not exist
+
+                                        String name = Customer.getString("first_name") + " "
+                                                + Customer.getString("last_name");
+
+                                        double total_spent = Customer.getDouble("total_spent");
+
+                                        if (largest_total_spent < total_spent) {
+                                            largest_total_spent = total_spent;
+                                            favourite_customer = name;
+                                        }
+
+
+                                    } catch (JSONException JE) {
+                                        // There is no customer object in the order
+                                    }
+                                }
+                            }
+
+                            System.out.println("Favourite Customer :" + favourite_customer);
+                            System.out.println("Largest Total Spent :" + largest_total_spent);
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+
+                    }
+                }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("VOLLEY", "ERROR");
+
+                        // Handle network related Errors
+                        if (error.networkResponse == null) {
+
+                            // Handle network Timeout error
+                            if (error.getClass().equals(TimeoutError.class)) {
+                                Toast.makeText(getApplicationContext(),
+                                        "Request Timeout Error!", Toast.LENGTH_LONG)
+                                        .show();
+                            } else {
+                                Toast.makeText(getApplicationContext(),
+                                        "Network Error. No Internet Connection", Toast.LENGTH_LONG)
+                                        .show();
+                            }
+                        }
+                    }
+                });
+
+        JsonObjectR.setRetryPolicy(new DefaultRetryPolicy(JSON_TIME_OUT,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+        // Send the JSON request
+        JSONVolleyController.getInstance().addToRequestQueue(JsonObjectR);
+
     }
 
     private void JSONRequestTotalPrice(String first_name, String last_name) {
@@ -336,113 +422,10 @@ public class MainActivity extends AppCompatActivity {
         return product_list;
     }
 
-    private Map JSONRequestGetCustomerInfo(String first_name, String last_name) {
-
-        final String FIRST_NAME = first_name;
-        final String LAST_NAME = last_name;
-
-        // Map will contain customer info
-        final Map customer_info = new HashMap();
-
-        JsonObjectRequest JsonObjectR = new JsonObjectRequest
-                (Request.Method.GET, URL, null, new Response.Listener<JSONObject>() {
-
-                    @Override
-                    public void onResponse(JSONObject response) {
-
-                        try {
-
-                            // Reset Amount
-                            total_price_amount = 0;
-
-                            // Get the Order JSON Array
-                            JSONArray OrderArray = response.getJSONArray("orders");
-
-                            // Tracing trough the Order array
-                            for (int order_index = 0; order_index < OrderArray.length(); order_index++) {
-
-                                // Get an order
-                                JSONObject Order = OrderArray.getJSONObject(order_index);
-
-                                // Make sure order is not cancelled
-                                if (Order.getString("cancel_reason").equals("null")) {
-
-                                    // Get customer info
-                                    try {
-                                        JSONObject Customer = Order.getJSONObject("customer");// Customer might not exist
-
-
-                                        String first_name = Customer.getString("first_name");
-                                        String last_name = Customer.getString("last_name");
-                                        if (first_name.equals(FIRST_NAME) && last_name.equals(LAST_NAME)) {
-
-                                            // Begin: Get customer info and put on map
-                                            total_price_amount += Order.getDouble("total_price");
-                                            customer_info.put("total_price",total_price_amount);
-                                            customer_info.put("id",Customer.getString("id"));
-                                            customer_info.put("email",Customer.getString("email"));
-                                            customer_info.put("phone",Customer.getString("phone"));
-                                            customer_info.put("note",Customer.getString("note"));
-                                            customer_info.put("total_spent",Customer.getString("total_spent"));
-                                            // End: Get customer info and put on map
-
-                                        }
-
-                                    } catch (JSONException JE) {
-                                        name_number = Order.getString("name");
-                                    }
-                                }
-                            }
-
-                            System.out.println("Customer id: " + customer_info.get("id"));
-                            System.out.println("Customer email: " + customer_info.get("email"));
-                            System.out.println("Customer phone: " + customer_info.get("phone"));
-                            System.out.println("Customer note: "+ customer_info.get("note"));
-                            System.out.println("Customer total price: " + customer_info.get("total_price"));
-                            System.out.println("Customer total spent: " + customer_info.get("total_spent"));
-
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-
-                    }
-                }, new Response.ErrorListener() {
-
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.e("VOLLEY", "ERROR");
-
-                        // Handle network related Errors
-                        if (error.networkResponse == null) {
-
-                            // Handle network Timeout error
-                            if (error.getClass().equals(TimeoutError.class)) {
-                                Toast.makeText(getApplicationContext(),
-                                        "Request Timeout Error!", Toast.LENGTH_LONG)
-                                        .show();
-                            } else {
-                                Toast.makeText(getApplicationContext(),
-                                        "Network Error. No Internet Connection", Toast.LENGTH_LONG)
-                                        .show();
-                            }
-                        }
-                    }
-                });
-
-        JsonObjectR.setRetryPolicy(new DefaultRetryPolicy(JSON_TIME_OUT,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-
-        // Send the JSON request
-        JSONVolleyController.getInstance().addToRequestQueue(JsonObjectR);
-
-        return customer_info;
-    }
-
     private Map JSONRequestGetItemInfo(String item) {
 
-        final String ITEM_NAME  = item;
-  
+        final String ITEM_NAME = item;
+
 
         // Map will contain item info
         final Map item_info = new HashMap();
@@ -454,7 +437,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onResponse(JSONObject response) {
 
                         try {
-                            
+
                             // Get the Order JSON Array
                             JSONArray OrderArray = response.getJSONArray("orders");
 
@@ -481,12 +464,12 @@ public class MainActivity extends AppCompatActivity {
 
                                         if (item_title.equals(ITEM_NAME)) {
                                             item_count += Item.getInt("quantity");
-                                            item_info.put("item_count",item_count);
-                                            item_info.put("product_id",Item.getString("product_id"));
-                                            item_info.put("price",Item.getString("price"));
-                                            item_info.put("variant_title",Item.getString("variant_title"));
-                                            item_info.put("grams",Item.getString("grams"));
-                                            item_info.put("vendor",Item.getString("vendor"));
+                                            item_info.put("item_count", item_count);
+                                            item_info.put("product_id", Item.getString("product_id"));
+                                            item_info.put("price", Item.getString("price"));
+                                            item_info.put("variant_title", Item.getString("variant_title"));
+                                            item_info.put("grams", Item.getString("grams"));
+                                            item_info.put("vendor", Item.getString("vendor"));
 
                                         }
 
