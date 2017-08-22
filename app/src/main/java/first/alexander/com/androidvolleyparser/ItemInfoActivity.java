@@ -5,13 +5,18 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import android.app.Activity;
+import android.app.Dialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -27,6 +32,8 @@ public class ItemInfoActivity extends AppCompatActivity {
 
     // All static variables
     final String URL = "https://shopicruit.myshopify.com/admin/orders.json?page=1&access_token=c32313df0d0ef512ca64d5b336a0d7c6";
+
+    final Context context = this;
 
     ListView list;
 
@@ -46,7 +53,25 @@ public class ItemInfoActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-               /* Toast.makeText(MainActivity.this, "You Clicked at " +web[+ position], Toast.LENGTH_SHORT).show();*/
+                // custom dialog
+                final Dialog dialog = new Dialog(context);
+                dialog.setContentView(R.layout.item_info_dialog);
+                dialog.setTitle("Product Item Info");
+
+                // set the custom dialog components - text, image and button
+                TextView text = (TextView) dialog.findViewById(R.id.item_TextViewDialog);
+                text.setText("Android custom dialog example!");
+
+                Button buttonClose = (Button) dialog.findViewById(R.id.buttonClose);
+                // if button is clicked, close the custom dialog
+                buttonClose.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
+
+                dialog.show();
 
             }
         });
