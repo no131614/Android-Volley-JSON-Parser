@@ -1,14 +1,11 @@
 package first.alexander.com.androidvolleyparser;
 
 import android.content.Intent;
-import android.media.Image;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,6 +33,13 @@ public class MainActivity extends AppCompatActivity {
 
     ImageButton imageButtonCustomerInfo;
     ImageButton imageButtonItemInfo;
+    ImageButton imageButtonRefresh;
+
+    TextView tvNumItems;
+    TextView tvPriceAmount;
+    TextView tvFavCustomer;
+    TextView tvTotalSpent;
+
 
     int item_count = 0;
     double total_price_amount = 0;
@@ -47,12 +51,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        TextView tvNumItems = (TextView) findViewById(R.id.textViewTotalNumItems);
-        TextView tvPriceAmount = (TextView) findViewById(R.id.textViewTotalPriceAmount);
-        TextView tvFavCustomer = (TextView) findViewById(R.id.textViewFavouriteCustomer);
+        tvNumItems = (TextView) findViewById(R.id.textViewTotalNumItems);
+        tvPriceAmount = (TextView) findViewById(R.id.textViewTotalPriceAmount);
+        tvFavCustomer = (TextView) findViewById(R.id.textViewFavouriteCustomer);
+        tvTotalSpent = (TextView) findViewById(R.id.  textViewTotalSpent);
 
-        JSONRequestTotalNumOfItems(tvPriceAmount,tvNumItems);
-        JSONRequestGetFavouriteCustomer(tvFavCustomer);
+        JSONRequestTotalNumOfItemsAndPrice(tvPriceAmount,tvNumItems);
+        JSONRequestGetFavouriteCustomer(tvFavCustomer, tvTotalSpent);
 
         imageButtonCustomerInfo = (ImageButton) findViewById(R.id.imageButtonCustomerInfo);
         imageButtonCustomerInfo.setOnClickListener(new View.OnClickListener() {
@@ -74,10 +79,21 @@ public class MainActivity extends AppCompatActivity {
 
         });
 
+        imageButtonRefresh  = (ImageButton) findViewById(R.id.imageButtonRefresh);
+        imageButtonRefresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                JSONRequestTotalNumOfItemsAndPrice(tvPriceAmount,tvNumItems);
+                JSONRequestGetFavouriteCustomer(tvFavCustomer, tvTotalSpent);
+            }
+
+        });
+
+
     }
 
     // Total number of items and total price
-    private void JSONRequestTotalNumOfItems(final TextView tvPrice, final TextView tvItem) {
+    private void JSONRequestTotalNumOfItemsAndPrice(final TextView tvPrice, final TextView tvItem) {
 
         JsonObjectRequest JsonObjectR = new JsonObjectRequest
                 (Request.Method.GET, URL, null, new Response.Listener<JSONObject>() {
@@ -124,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
                             tvItem.setText(null);
                             tvItem.append("" + item_count);
                             tvPrice.setText(null);
-                            tvPrice.append(String.format("%.2f", total_price_amount));
+                            tvPrice.append(String.format("%.2f", total_price_amount) + " CAD");
 
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -149,6 +165,10 @@ public class MainActivity extends AppCompatActivity {
                                 Toast.makeText(getApplicationContext(),
                                         "Network Error. No Internet Connection", Toast.LENGTH_LONG)
                                         .show();
+                                tvItem.setText(null);
+                                tvItem.append("Network Error");
+                                tvPrice.setText(null);
+                                tvPrice.append("Network Error");
                             }
                         }
                     }
@@ -162,7 +182,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //Favourite Customer base on total spent
-    private void JSONRequestGetFavouriteCustomer(final TextView tvFavCustomer) {
+    private void JSONRequestGetFavouriteCustomer(final TextView tvFavCustomer, final TextView tvTotalSpent) {
 
 
         JsonObjectRequest JsonObjectR = new JsonObjectRequest
@@ -212,7 +232,8 @@ public class MainActivity extends AppCompatActivity {
 
                             tvFavCustomer.setText(null);
                             tvFavCustomer.append(favourite_customer);
-                            System.out.println("Largest Total Spent :" + largest_total_spent);
+                            tvTotalSpent.setText(null);
+                            tvTotalSpent.append("With Total Spent of " + largest_total_spent + " CAD");
 
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -238,6 +259,9 @@ public class MainActivity extends AppCompatActivity {
                                 Toast.makeText(getApplicationContext(),
                                         "Network Error. No Internet Connection", Toast.LENGTH_LONG)
                                         .show();
+                                tvFavCustomer.setText(null);
+                                tvFavCustomer.append("Network Error");
+                                tvTotalSpent.setText(null);
                             }
                         }
                     }
