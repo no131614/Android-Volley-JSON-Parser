@@ -7,31 +7,31 @@
 
     <TextView
         android:id="@+id/textView"
-        android:layout_width="200dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="21dp"
-        android:textAlignment="center"
-        android:text="Dashboard"
-        android:textSize="40dp"
-        android:fontFamily="sans-serif-condensed"
+        android:layout_width="500dp"
+        android:layout_height="85dp"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="21dp"
+        android:fontFamily="sans-serif-condensed"
+        android:text="Dashboard"
+        android:textAlignment="center"
+        android:textSize="80dp" />
 
     <ImageButton
         android:id="@+id/imageButtonRefresh"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        app:srcCompat="@drawable/refresh"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_alignBottom="@+id/textView"
+        android:layout_alignEnd="@+id/relativeLayout3"
         android:scaleType="fitCenter"
-        android:layout_above="@+id/relativeLayout2"
-        android:layout_toEndOf="@+id/textView" />
+        app:srcCompat="@drawable/refresh" />
 
     <RelativeLayout
-        android:layout_width="380dp"
-        android:layout_height="140dp"
         android:id="@+id/relativeLayout2"
-        android:layout_below="@+id/textView"
-        android:layout_alignStart="@+id/relativeLayout3">
+        android:layout_width="500dp"
+        android:layout_height="230dp"
+        android:layout_above="@+id/relativeLayout3"
+        android:layout_centerHorizontal="true">
 
 
         <TextView
@@ -39,42 +39,42 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="monospace"
-            android:textAlignment="center"
-            android:textSize="20dp"
             android:textColor="#000000"
-            android:layout_marginBottom="13dp"
-            android:layout_above="@+id/textViewTotalPrice"
-            android:layout_centerHorizontal="true" />
+            android:textAlignment="center"
+            android:textSize="30dp"
+            android:layout_below="@+id/textViewItemNum"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="21dp" />
 
         <TextView
             android:id="@+id/textViewTotalPriceAmount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="monospace"
-            android:textAlignment="center"
-            android:textColor="#000000"
-            android:textSize="18dp"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="20dp" />
+            android:layout_marginBottom="20dp"
+            android:fontFamily="monospace"
+            android:textColor="#000000"
+            android:textAlignment="center"
+            android:textSize="27dp" />
 
 
         <TextView
             android:id="@+id/textViewItemNum"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Number of Item Sold"
-            android:textSize="16dp"
             android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true" />
+            android:layout_centerHorizontal="true"
+            android:text="Number of Item Sold"
+            android:textSize="25dp" />
 
         <TextView
             android:id="@+id/textViewTotalPrice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="21dp"
             android:text="Total Price Amount"
-            android:textSize="16dp"
-            android:layout_marginBottom="11dp"
+            android:textSize="25dp"
             android:layout_above="@+id/textViewTotalPriceAmount"
             android:layout_centerHorizontal="true" />
 
@@ -82,109 +82,113 @@
     </RelativeLayout>
 
     <RelativeLayout
-        android:layout_width="380dp"
-        android:layout_height="160dp"
-        android:background="@drawable/rectangle"
         android:id="@+id/relativeLayout3"
-        android:layout_below="@+id/relativeLayout2"
+        android:layout_width="550dp"
+        android:layout_height="200dp"
+        android:background="@drawable/rectangle"
+        android:layout_centerVertical="true"
         android:layout_alignStart="@+id/relativeLayout">
 
         <ImageView
             android:id="@+id/imageView3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:srcCompat="@android:drawable/btn_star_big_on"
             android:layout_alignParentBottom="true"
             android:layout_alignParentStart="true"
+            android:layout_marginBottom="17dp"
             android:layout_marginStart="23dp"
-            android:layout_marginBottom="17dp" />
+            app:srcCompat="@android:drawable/btn_star_big_on" />
 
         <ImageView
             android:id="@+id/imageView4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:srcCompat="@android:drawable/btn_star_big_on"
-            android:layout_alignTop="@+id/imageView3"
             android:layout_alignParentEnd="true"
-            android:layout_marginEnd="24dp" />
+            android:layout_alignTop="@+id/imageView3"
+            android:layout_marginEnd="24dp"
+            app:srcCompat="@android:drawable/btn_star_big_on" />
 
         <TextView
             android:id="@+id/textView6"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Favourite Customer of The Day"
-            android:textSize="27dp"
-            android:fontFamily="cursive"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="18dp" />
+            android:layout_marginTop="18dp"
+            android:fontFamily="cursive"
+            android:text="Favourite Customer of The Day"
+            android:textSize="38dp" />
 
         <TextView
             android:id="@+id/textViewFavouriteCustomer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize='18dp'
-            android:textAlignment="center"
-            android:fontFamily="monospace"
             android:layout_below="@+id/textView6"
-            android:layout_centerHorizontal="true" />
+            android:layout_centerHorizontal="true"
+            android:fontFamily="monospace"
+            android:textAlignment="center"
+            android:textSize='27dp' />
 
         <TextView
             android:id="@+id/textViewTotalSpent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize='15dp'
-            android:textAlignment="center"
-            android:fontFamily="monospace"
             android:layout_below="@+id/textViewFavouriteCustomer"
-            android:layout_centerHorizontal="true" />
+            android:layout_centerHorizontal="true"
+            android:fontFamily="monospace"
+            android:textAlignment="center"
+            android:textSize='26dp' />
 
     </RelativeLayout>
 
     <RelativeLayout
-        android:layout_width="380dp"
-        android:layout_height="130dp"
         android:id="@+id/relativeLayout"
-        android:layout_below="@id/relativeLayout3"
+        android:layout_width="550dp"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:layout_below="@+id/relativeLayout3"
         android:layout_centerHorizontal="true">
 
         <TextView
             android:id="@+id/textView8"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="14dp"
+            android:layout_alignBaseline="@+id/textView9"
+            android:layout_alignBottom="@+id/textView9"
+            android:layout_alignParentEnd="true"
             android:text="Customer Information"
-            android:layout_alignParentEnd="true" />
+            android:textSize='25dp' />
 
         <TextView
             android:id="@+id/textView9"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Item Stats Information"
-            android:layout_marginStart="15dp" />
+            android:textSize='25dp'
+            android:layout_marginTop="27dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true" />
 
         <ImageButton
             android:id="@+id/imageButtonCustomerInfo"
-            android:layout_below="@id/textView8"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            app:srcCompat="@drawable/customer_i"
+            android:layout_width="180dp"
+            android:layout_height="180dp"
+            android:layout_marginStart="32dp"
             android:scaleType="fitCenter"
-            android:layout_marginEnd="32dp"
-            android:layout_centerVertical="true"
-            android:layout_alignParentEnd="true" />
+            app:srcCompat="@drawable/customer_i"
+            android:layout_alignTop="@+id/imageButtonItemInfo"
+            android:layout_alignStart="@+id/textView8" />
 
         <ImageButton
             android:id="@+id/imageButtonItemInfo"
-            android:layout_below="@id/textView9"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            app:srcCompat="@drawable/item_i"
+            android:layout_width="180dp"
+            android:layout_height="180dp"
+            android:layout_marginStart="26dp"
             android:scaleType="fitCenter"
-            android:layout_marginStart="31dp"
-            android:layout_alignTop="@+id/imageButtonCustomerInfo"
-            android:layout_alignParentStart="true" />
+            app:srcCompat="@drawable/item_i"
+            android:layout_below="@+id/textView9"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="33dp" />
 
     </RelativeLayout>
 
