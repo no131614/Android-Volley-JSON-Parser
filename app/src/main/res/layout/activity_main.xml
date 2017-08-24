@@ -188,5 +188,31 @@
 
     </RelativeLayout>
 
+    <ProgressBar
+        android:id="@+id/progressBarItem"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="19dp" />
+
+    <ProgressBar
+        android:id="@+id/progressBarPrice"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/relativeLayout3"
+        android:layout_alignStart="@+id/progressBarItem" />
+
+    <ProgressBar
+        android:id="@+id/progressBarCustomer"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="51dp"
+        android:layout_above="@+id/relativeLayout"
+        android:layout_alignStart="@+id/progressBarPrice" />
+
 
 </RelativeLayout>

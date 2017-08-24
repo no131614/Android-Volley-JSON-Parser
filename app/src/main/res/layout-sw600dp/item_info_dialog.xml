@@ -15,12 +15,12 @@
 
         <ImageView
             android:id="@+id/imageView2"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginTop="132dp"
+            app:srcCompat="@drawable/box"
             android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="12dp"
-            app:srcCompat="@drawable/box" />
+            android:layout_centerHorizontal="true" />
 
 
         <TextView
@@ -28,6 +28,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="46dp"
+            android:textSize="23dp"
             android:layout_below="@+id/imageView2"
             android:fontFamily="monospace"
             android:layout_centerHorizontal="true" />
@@ -38,10 +39,22 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="OK"
+            android:textSize="30dp"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="59dp"
             android:layout_below="@+id/item_TextViewDialog"
             android:layout_alignStart="@+id/imageView2" />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:textSize="30dp"
+            android:textColor="#00000F"
+            android:layout_marginTop="29dp"
+            android:text="Product Item Info" />
 
     </RelativeLayout>
 

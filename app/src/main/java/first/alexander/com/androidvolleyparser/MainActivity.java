@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,6 +41,10 @@ public class MainActivity extends AppCompatActivity {
     TextView tvFavCustomer;
     TextView tvTotalSpent;
 
+    ProgressBar ProgressBarCustomer;
+    ProgressBar ProgressBarItem;
+    ProgressBar ProgressBarPrice;
+
 
     int item_count = 0;
     double total_price_amount = 0;
@@ -50,6 +55,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        ProgressBarCustomer = (ProgressBar)findViewById(R.id.progressBarCustomer);
+        ProgressBarItem= (ProgressBar)findViewById(R.id.progressBarItem);
+        ProgressBarPrice = (ProgressBar)findViewById(R.id.progressBarPrice);
 
         tvNumItems = (TextView) findViewById(R.id.textViewTotalNumItems);
         tvPriceAmount = (TextView) findViewById(R.id.textViewTotalPriceAmount);
@@ -94,6 +103,9 @@ public class MainActivity extends AppCompatActivity {
 
     // Total number of items and total price
     private void JSONRequestTotalNumOfItemsAndPrice(final TextView tvPrice, final TextView tvItem) {
+
+        ProgressBarItem.setVisibility(View.VISIBLE);
+        ProgressBarPrice.setVisibility(View.VISIBLE);
 
         JsonObjectRequest JsonObjectR = new JsonObjectRequest
                 (Request.Method.GET, URL, null, new Response.Listener<JSONObject>() {
@@ -141,6 +153,8 @@ public class MainActivity extends AppCompatActivity {
                             tvItem.append("" + item_count);
                             tvPrice.setText(null);
                             tvPrice.append(String.format("%.2f", total_price_amount) + " CAD");
+                            ProgressBarItem.setVisibility(View.INVISIBLE);
+                            ProgressBarPrice.setVisibility(View.INVISIBLE);
 
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -161,6 +175,8 @@ public class MainActivity extends AppCompatActivity {
                                 Toast.makeText(getApplicationContext(),
                                         "Request Timeout Error!", Toast.LENGTH_LONG)
                                         .show();
+                                ProgressBarItem.setVisibility(View.INVISIBLE);
+                                ProgressBarPrice.setVisibility(View.INVISIBLE);
                             } else {
                                 Toast.makeText(getApplicationContext(),
                                         "Network Error. No Internet Connection", Toast.LENGTH_LONG)
@@ -169,6 +185,8 @@ public class MainActivity extends AppCompatActivity {
                                 tvItem.append("Network Error");
                                 tvPrice.setText(null);
                                 tvPrice.append("Network Error");
+                                ProgressBarItem.setVisibility(View.INVISIBLE);
+                                ProgressBarPrice.setVisibility(View.INVISIBLE);
                             }
                         }
                     }
@@ -184,6 +202,7 @@ public class MainActivity extends AppCompatActivity {
     //Favourite Customer base on total spent
     private void JSONRequestGetFavouriteCustomer(final TextView tvFavCustomer, final TextView tvTotalSpent) {
 
+        ProgressBarCustomer.setVisibility(View.VISIBLE);
 
         JsonObjectRequest JsonObjectR = new JsonObjectRequest
                 (Request.Method.GET, URL, null, new Response.Listener<JSONObject>() {
@@ -234,6 +253,7 @@ public class MainActivity extends AppCompatActivity {
                             tvFavCustomer.append(favourite_customer);
                             tvTotalSpent.setText(null);
                             tvTotalSpent.append("With Total Spent of " + largest_total_spent + " CAD");
+                            ProgressBarCustomer.setVisibility(View.INVISIBLE);
 
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -255,6 +275,7 @@ public class MainActivity extends AppCompatActivity {
                                 Toast.makeText(getApplicationContext(),
                                         "Request Timeout Error!", Toast.LENGTH_LONG)
                                         .show();
+                                ProgressBarCustomer.setVisibility(View.INVISIBLE);
                             } else {
                                 Toast.makeText(getApplicationContext(),
                                         "Network Error. No Internet Connection", Toast.LENGTH_LONG)
@@ -262,6 +283,7 @@ public class MainActivity extends AppCompatActivity {
                                 tvFavCustomer.setText(null);
                                 tvFavCustomer.append("Network Error");
                                 tvTotalSpent.setText(null);
+                                ProgressBarCustomer.setVisibility(View.INVISIBLE);
                             }
                         }
                     }

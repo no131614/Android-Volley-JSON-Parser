@@ -6,11 +6,14 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
+import android.app.ActionBar;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -79,7 +82,9 @@ public class ItemInfoActivity extends AppCompatActivity {
             }
         });
 
+
     }
+
 
     private void JSONRequestGetProducts(ItemInfoListAdapter adapter) {
 
