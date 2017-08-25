@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,11 +30,17 @@ public class CustomerDetailsFragment extends Fragment {
     final String URL = "https://shopicruit.myshopify.com/admin/orders.json?page=1&access_token=c32313df0d0ef512ca64d5b336a0d7c6";
     final int JSON_TIME_OUT = 15000; //Set JSON Request Connection Timeout
 
+    ProgressBar ProgressBarCustomerDetails;
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
+
         /** Inflating the layout country_details_fragment_layout to the view object v */
         View v = inflater.inflate(R.layout.customer_details_fragment_layout, null);
+
+        ProgressBarCustomerDetails = (ProgressBar) v.findViewById(R.id.progressBarCustomerDetails);
 
         /** Getting the textview object of the layout to set the details */
         TextView tv = (TextView) v.findViewById(R.id.customer_details);
@@ -51,6 +58,8 @@ public class CustomerDetailsFragment extends Fragment {
 
 
     private void JSONRequestGetCustomerInfo(String name, final TextView textView) {
+
+        ProgressBarCustomerDetails.setVisibility(View.VISIBLE);
 
         // Begin: Parse first name and last name
         String lastName = "";
@@ -104,11 +113,11 @@ public class CustomerDetailsFragment extends Fragment {
                                             // Begin: Get customer info and put on map
                                             total_price_amount += Order.getDouble("total_price");
                                             customer_info.put("total_price", total_price_amount);
-                                            customer_info.put("id", Customer.getString("id"));
-                                            customer_info.put("email", Customer.getString("email"));
-                                            customer_info.put("phone", Customer.getString("phone"));
-                                            customer_info.put("note", Customer.getString("note"));
-                                            customer_info.put("total_spent", Customer.getString("total_spent"));
+                                            customer_info.put("id", Customer.getString("id") == "null" ? "-" : Customer.getString("id"));
+                                            customer_info.put("email",Customer.getString("email") == "null" ? "-" : Customer.getString("email"));
+                                            customer_info.put("phone", Customer.getString("phone") == "null" ? "-" : Customer.getString("phone"));
+                                            customer_info.put("note", Customer.getString("note") == "null" ? "-" : Customer.getString("note"));
+                                            customer_info.put("total_spent", Customer.getString("note") == "null" ? "-" : Customer.getString("note"));
                                             // End: Get customer info and put on map
 
                                         }
@@ -126,9 +135,10 @@ public class CustomerDetailsFragment extends Fragment {
                             textView.append(" \n Email: " + customer_info.get("email"));
                             textView.append(" \n Phone: " + customer_info.get("phone"));
                             textView.append(" \n Note: " + customer_info.get("note"));
-                            textView.append(" \n Total price : " +
-                                    String.format("%.2f", customer_info.get("total_price")) + " CAD");
+                            textView.append(" \n Total price : " + String.format("%.2f", customer_info.get("total_price")) + " CAD");
                             textView.append(" \n Total spent: " + customer_info.get("total_spent"));
+
+                            ProgressBarCustomerDetails.setVisibility(View.INVISIBLE);
 
 
                         } catch (Exception e) {
@@ -148,8 +158,11 @@ public class CustomerDetailsFragment extends Fragment {
                             // Handle network Timeout error
                             if (error.getClass().equals(TimeoutError.class)) {
                                 Toast.makeText(getActivity(), "Request Timeout Error!", Toast.LENGTH_SHORT).show();
+                                ProgressBarCustomerDetails.setVisibility(View.INVISIBLE);
+
                             } else {
                                 Toast.makeText(getActivity(), "Network Error. No Internet Connection!", Toast.LENGTH_SHORT).show();
+                                ProgressBarCustomerDetails.setVisibility(View.INVISIBLE);
                             }
                         }
                     }

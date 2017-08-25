@@ -48,6 +48,8 @@ public class ItemInfoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_info);
 
+
+
         ArrayList itemList = new ArrayList();
 
         ItemInfoListAdapter adapter = new ItemInfoListAdapter(ItemInfoActivity.this, itemList);
@@ -187,6 +189,7 @@ public class ItemInfoActivity extends AppCompatActivity {
 
     private void JSONRequestGetItemInfo(String item, final TextView textView) {
 
+
         final String ITEM_NAME = item;
         final Map item_info = new HashMap();
 
@@ -237,7 +240,6 @@ public class ItemInfoActivity extends AppCompatActivity {
                                             item_info.put("total_price", total_price);
                                             // End: Get customer info and put on map
 
-
                                         }
 
                                     }
@@ -247,7 +249,7 @@ public class ItemInfoActivity extends AppCompatActivity {
                             }
 
                             textView.setText(null);
-                            textView.append(" \n Product Name :" + ITEM_NAME);
+                            textView.append(" \n Name :" + ITEM_NAME);
                             textView.append(" \n Product ID :" + item_info.get("product_id"));
                             textView.append(" \n Number of Items Sold :" + item_info.get("item_count"));
                             textView.append(" \n Total Price :" +
