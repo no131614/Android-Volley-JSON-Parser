@@ -11,6 +11,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
@@ -32,7 +33,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class ItemInfoActivity extends AppCompatActivity {
+public class ItemInfoActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
 
     // All static variables
     final String URL = "https://shopicruit.myshopify.com/admin/orders.json?page=1&access_token=c32313df0d0ef512ca64d5b336a0d7c6";
@@ -41,6 +42,8 @@ public class ItemInfoActivity extends AppCompatActivity {
 
     final Context context = this;
 
+    private SwipeRefreshLayout swipeRefreshLayout;
+
     ListView list;
 
     @Override
@@ -48,12 +51,21 @@ public class ItemInfoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_info);
 
-
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout_item_info);
+        swipeRefreshLayout.setOnRefreshListener(this);
 
         ArrayList itemList = new ArrayList();
+        final ItemInfoListAdapter adapter = new ItemInfoListAdapter(ItemInfoActivity.this, itemList);
 
-        ItemInfoListAdapter adapter = new ItemInfoListAdapter(ItemInfoActivity.this, itemList);
-        JSONRequestGetProducts(adapter);
+        swipeRefreshLayout.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        swipeRefreshLayout.setRefreshing(true);
+                                        JSONRequestGetProducts(adapter);
+                                    }
+                                }
+        );
+
         list = (ListView) findViewById(R.id.item_listView);
         list.setAdapter(adapter);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -80,9 +92,10 @@ public class ItemInfoActivity extends AppCompatActivity {
                 });
 
                 dialog.show();
-
             }
         });
+
+
 
 
     }
@@ -93,6 +106,7 @@ public class ItemInfoActivity extends AppCompatActivity {
         final ArrayList product_list = new ArrayList();
         final ItemInfoListAdapter final_adapter = adapter;
 
+        swipeRefreshLayout.setRefreshing(true);
 
         JsonObjectRequest JsonObjectR = new JsonObjectRequest
                 (Request.Method.GET, URL, null, new Response.Listener<JSONObject>() {
@@ -150,6 +164,7 @@ public class ItemInfoActivity extends AppCompatActivity {
                             final_adapter.clear();
                             final_adapter.addAll(product_list);
                             final_adapter.notifyDataSetChanged();
+                            swipeRefreshLayout.setRefreshing(false);
 
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -170,10 +185,12 @@ public class ItemInfoActivity extends AppCompatActivity {
                                 Toast.makeText(getApplicationContext(),
                                         "Request Timeout Error!", Toast.LENGTH_LONG)
                                         .show();
+                                swipeRefreshLayout.setRefreshing(false);
                             } else {
                                 Toast.makeText(getApplicationContext(),
                                         "Network Error. No Internet Connection", Toast.LENGTH_LONG)
                                         .show();
+                                swipeRefreshLayout.setRefreshing(false);
                             }
                         }
                     }
@@ -291,6 +308,14 @@ public class ItemInfoActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    public void onRefresh() {
+        ArrayList itemList = new ArrayList();
+        final ItemInfoListAdapter adapter = new ItemInfoListAdapter(ItemInfoActivity.this, itemList);
+        JSONRequestGetProducts(adapter);
+        list = (ListView) findViewById(R.id.item_listView);
+        list.setAdapter(adapter);
+    }
 }
 
 

@@ -218,5 +218,14 @@
         android:layout_above="@+id/relativeLayout3"
         android:layout_alignStart="@+id/progressBarItem" />
 
+    <ImageButton
+        android:id="@+id/imageButtonExit"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:scaleType="fitCenter"
+        android:layout_alignBottom="@+id/textView"
+        android:layout_alignStart="@+id/relativeLayout3"
+        app:srcCompat="@drawable/exit" />
+
 
 </RelativeLayout>

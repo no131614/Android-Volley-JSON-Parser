@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     ImageButton imageButtonCustomerInfo;
     ImageButton imageButtonItemInfo;
     ImageButton imageButtonRefresh;
+    ImageButton imageButtonExit;
 
     TextView tvNumItems;
     TextView tvPriceAmount;
@@ -98,6 +99,15 @@ public class MainActivity extends AppCompatActivity {
 
         });
 
+        imageButtonExit = (ImageButton) findViewById(R.id.imageButtonExit);
+        imageButtonExit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+                System.exit(0);
+            }
+
+        });
 
     }
 
