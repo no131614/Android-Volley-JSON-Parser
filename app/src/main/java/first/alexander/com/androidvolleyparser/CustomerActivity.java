@@ -9,6 +9,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+
 public class CustomerActivity extends AppCompatActivity implements CustomerInfoFragment.ListFragmentItemClickListener {
 
     @Override
@@ -16,7 +17,7 @@ public class CustomerActivity extends AppCompatActivity implements CustomerInfoF
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_customer);
 
-        getSupportActionBar().setIcon(R.drawable.customer);
+        getSupportActionBar().setIcon(R.drawable.customer_i);
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_TITLE);
     }
 

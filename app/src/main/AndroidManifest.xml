@@ -26,13 +26,15 @@
         <activity android:name=".CustomerDetailsActivity" />
 
         <activity android:name=".ItemInfoActivity"
+            android:icon="@drawable/item_i"
             android:screenOrientation="portrait"
-            android:label="Item Stats Information"></activity>
+            android:label=""
+            />
 
         <activity
             android:name=".CustomerActivity"
-            android:icon="@drawable/customer"
-            android:label="Customer Information" />
+            android:icon="@drawable/customer_i"
+            android:label="" />
 
     </application>
 

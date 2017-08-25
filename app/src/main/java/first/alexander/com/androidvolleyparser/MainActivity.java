@@ -26,11 +26,24 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class MainActivity extends AppCompatActivity {
-    TextView textViewResult;
 
+/**
+ * Main Activity of Android Volley Parser
+ *
+ * This activity contains main implementation of the Dashboard
+ *
+ * @author Alexander Julianto (no131614)
+ * @version 1.0
+ * @since API 21
+ */
+
+public class MainActivity extends AppCompatActivity {
+
+    // Set URL for JSON Volley Request
     final String URL = "https://shopicruit.myshopify.com/admin/orders.json?page=1&access_token=c32313df0d0ef512ca64d5b336a0d7c6";
-    String name_number = null;
+
+    // Set JSON Request Connection Timeout (15 seconds)
+    final int JSON_TIME_OUT = 15000;
 
     ImageButton imageButtonCustomerInfo;
     ImageButton imageButtonItemInfo;
@@ -46,12 +59,6 @@ public class MainActivity extends AppCompatActivity {
     ProgressBar ProgressBarItem;
     ProgressBar ProgressBarPrice;
 
-
-    int item_count = 0;
-    double total_price_amount = 0;
-
-    final int JSON_TIME_OUT = 15000; //Set JSON Request Connection Timeout
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,9 +73,13 @@ public class MainActivity extends AppCompatActivity {
         tvFavCustomer = (TextView) findViewById(R.id.textViewFavouriteCustomer);
         tvTotalSpent = (TextView) findViewById(R.id.  textViewTotalSpent);
 
+        // Begin: First JSON Volley Request for Dashboard
         JSONRequestTotalNumOfItemsAndPrice(tvPriceAmount,tvNumItems);
         JSONRequestGetFavouriteCustomer(tvFavCustomer, tvTotalSpent);
+        // End: First JSON Volley Request for Dashboard
 
+
+        // Begin: All Dashboard button implementation
         imageButtonCustomerInfo = (ImageButton) findViewById(R.id.imageButtonCustomerInfo);
         imageButtonCustomerInfo.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -108,10 +119,16 @@ public class MainActivity extends AppCompatActivity {
             }
 
         });
+        // End: All Dashboard button implementation
 
     }
 
-    // Total number of items and total price
+    /**
+     * JSON Volley Request to get number total price of all items and total number of items.
+     *
+     * @param tvPrice - Text view to display the total price of all items
+     * @param tvItem - Text view to display total number of items
+     */
     private void JSONRequestTotalNumOfItemsAndPrice(final TextView tvPrice, final TextView tvItem) {
 
         ProgressBarItem.setVisibility(View.VISIBLE);
@@ -159,6 +176,7 @@ public class MainActivity extends AppCompatActivity {
 
                             }
 
+                            // Begin: Display text view for
                             tvItem.setText(null);
                             tvItem.append("" + item_count);
                             tvPrice.setText(null);
@@ -205,11 +223,16 @@ public class MainActivity extends AppCompatActivity {
         JsonObjectR.setRetryPolicy(new DefaultRetryPolicy(JSON_TIME_OUT,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
-        // Send the JSON request
+        // Add to JSON request Queue
         JSONVolleyController.getInstance().addToRequestQueue(JsonObjectR);
     }
 
-    //Favourite Customer base on total spent
+    /**
+     * JSON Volley Request to get the favourite customer base on the top total spent.
+     *
+     * @param tvFavCustomer - Text view to display the favourite customer
+     * @param tvTotalSpent - Text view to display the total spent of the favourite customer
+     */
     private void JSONRequestGetFavouriteCustomer(final TextView tvFavCustomer, final TextView tvTotalSpent) {
 
         ProgressBarCustomer.setVisibility(View.VISIBLE);
@@ -247,6 +270,7 @@ public class MainActivity extends AppCompatActivity {
 
                                         double total_spent = Customer.getDouble("total_spent");
 
+                                        // Getting the customer with the top total spent
                                         if (largest_total_spent < total_spent) {
                                             largest_total_spent = total_spent;
                                             favourite_customer = name;
@@ -259,10 +283,13 @@ public class MainActivity extends AppCompatActivity {
                                 }
                             }
 
+                            // Begin: Display text view for fav customer and total spent
                             tvFavCustomer.setText(null);
                             tvFavCustomer.append(favourite_customer);
                             tvTotalSpent.setText(null);
                             tvTotalSpent.append("With Total Spent of " + largest_total_spent + " CAD");
+                            // End: Display text view for fav customer and total spent
+
                             ProgressBarCustomer.setVisibility(View.INVISIBLE);
 
                         } catch (Exception e) {
@@ -306,278 +333,5 @@ public class MainActivity extends AppCompatActivity {
         JSONVolleyController.getInstance().addToRequestQueue(JsonObjectR);
 
     }
-
-    private void JSONRequestTotalPrice(String first_name, String last_name) {
-
-        final String FIRST_NAME = first_name;
-        final String LAST_NAME = last_name;
-        JsonObjectRequest JsonObjectR = new JsonObjectRequest
-                (Request.Method.GET, URL, null, new Response.Listener<JSONObject>() {
-
-                    @Override
-                    public void onResponse(JSONObject response) {
-
-                        try {
-
-                            // Reset Amount
-                            total_price_amount = 0;
-
-                            // Get the Order JSON Array
-                            JSONArray OrderArray = response.getJSONArray("orders");
-
-                            // Tracing trough the Order array
-                            for (int order_index = 0; order_index < OrderArray.length(); order_index++) {
-
-                                // Get an order
-                                JSONObject Order = OrderArray.getJSONObject(order_index);
-
-                                // Make sure order is not cancelled
-                                if (Order.getString("cancel_reason").equals("null")) {
-
-                                    // Get customer info
-                                    try {
-                                        JSONObject Customer = Order.getJSONObject("customer");// Customer might not exist
-
-                                        // Begin: Check if it is Napoleon Batz and calculate his total price
-                                        String first_name = Customer.getString("first_name");
-                                        String last_name = Customer.getString("last_name");
-                                        if (first_name.equals(FIRST_NAME) && last_name.equals(LAST_NAME)) {
-
-                                            //Get total price for an order
-                                            total_price_amount += Order.getDouble("total_price");
-
-                                        }
-                                        // End: Check if it is Napoleon Batz and calculate his total price
-                                    } catch (JSONException JE) {
-                                        name_number = Order.getString("name");
-                                    }
-
-                                }
-
-                            }
-
-                            textViewResult.append(FIRST_NAME + " " + LAST_NAME + " Total Cost :" +
-                                    String.format("%.2f", total_price_amount));
-                            textViewResult.append(" \n");
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-
-                    }
-                }, new Response.ErrorListener() {
-
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.e("VOLLEY", "ERROR");
-
-                        // Handle network related Errors
-                        if (error.networkResponse == null) {
-
-                            // Handle network Timeout error
-                            if (error.getClass().equals(TimeoutError.class)) {
-                                Toast.makeText(getApplicationContext(),
-                                        "Request Timeout Error!", Toast.LENGTH_LONG)
-                                        .show();
-                            } else {
-                                Toast.makeText(getApplicationContext(),
-                                        "Network Error. No Internet Connection", Toast.LENGTH_LONG)
-                                        .show();
-                            }
-                        }
-                    }
-                });
-
-        JsonObjectR.setRetryPolicy(new DefaultRetryPolicy(JSON_TIME_OUT,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-
-        // Send the JSON request
-        JSONVolleyController.getInstance().addToRequestQueue(JsonObjectR);
-    }
-
-    private ArrayList JSONRequestGetProducts() {
-
-        final ArrayList product_list = new ArrayList();
-
-        JsonObjectRequest JsonObjectR = new JsonObjectRequest
-                (Request.Method.GET, URL, null, new Response.Listener<JSONObject>() {
-
-                    @Override
-                    public void onResponse(JSONObject response) {
-
-                        try {
-
-                            // Get the Order JSON Array
-                            JSONArray OrderArray = response.getJSONArray("orders");
-
-                            // Tracing trough the Order array
-                            for (int order_index = 0; order_index < OrderArray.length(); order_index++) {
-
-                                // Get an order
-                                JSONObject Order = OrderArray.getJSONObject(order_index);
-
-                                // Make sure order is not cancelled
-                                if (Order.getString("cancel_reason").equals("null")) {
-
-                                    // Get a line items array from an order
-                                    JSONArray line_itemsArray = Order.getJSONArray("line_items");
-
-
-                                    // Tracing trough the line items array
-                                    for (int line_index = 0; line_index < line_itemsArray.length(); line_index++) {
-
-                                        // Get a line item
-                                        JSONObject Item = line_itemsArray.getJSONObject(line_index);
-
-                                        // Get the item title
-                                        String item_title = Item.getString("title");
-
-                                        // Check for duplicates and add the name into the list
-                                        if (!product_list.contains(item_title)) {
-                                            product_list.add(item_title);
-                                            System.out.println(item_title);
-                                        }
-
-                                    }
-
-                                }
-
-                            }
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-
-                    }
-                }, new Response.ErrorListener() {
-
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.e("VOLLEY", "ERROR");
-
-                        // Handle network related Errors
-                        if (error.networkResponse == null) {
-
-                            // Handle network Timeout error
-                            if (error.getClass().equals(TimeoutError.class)) {
-                                Toast.makeText(getApplicationContext(),
-                                        "Request Timeout Error!", Toast.LENGTH_LONG)
-                                        .show();
-                            } else {
-                                Toast.makeText(getApplicationContext(),
-                                        "Network Error. No Internet Connection", Toast.LENGTH_LONG)
-                                        .show();
-                            }
-                        }
-                        return;
-                    }
-                });
-
-
-        // Send the JSON request
-        JSONVolleyController.getInstance().addToRequestQueue(JsonObjectR);
-
-        return product_list;
-    }
-
-    private Map JSONRequestGetItemInfo(String item) {
-
-        final String ITEM_NAME = item;
-
-
-        // Map will contain item info
-        final Map item_info = new HashMap();
-
-        JsonObjectRequest JsonObjectR = new JsonObjectRequest
-                (Request.Method.GET, URL, null, new Response.Listener<JSONObject>() {
-
-                    @Override
-                    public void onResponse(JSONObject response) {
-
-                        try {
-
-                            // Get the Order JSON Array
-                            JSONArray OrderArray = response.getJSONArray("orders");
-
-                            // Tracing trough the Order array
-                            for (int order_index = 0; order_index < OrderArray.length(); order_index++) {
-
-                                // Get an order
-                                JSONObject Order = OrderArray.getJSONObject(order_index);
-
-                                // Make sure order is not cancelled
-                                if (Order.getString("cancel_reason").equals("null")) {
-
-                                    // Get a line items array from an order
-                                    JSONArray line_itemsArray = Order.getJSONArray("line_items");
-
-                                    // Tracing trough the line items array
-                                    for (int line_index = 0; line_index < line_itemsArray.length(); line_index++) {
-
-                                        // Get a line item
-                                        JSONObject Item = line_itemsArray.getJSONObject(line_index);
-
-                                        // Get the item title
-                                        String item_title = Item.getString("title");
-
-                                        if (item_title.equals(ITEM_NAME)) {
-                                            item_count += Item.getInt("quantity");
-                                            item_info.put("item_count", item_count);
-                                            item_info.put("product_id", Item.getString("product_id"));
-                                            item_info.put("price", Item.getString("price"));
-                                            item_info.put("variant_title", Item.getString("variant_title"));
-                                            item_info.put("grams", Item.getString("grams"));
-                                            item_info.put("vendor", Item.getString("vendor"));
-
-                                        }
-
-                                    }
-                                }
-                            }
-
-                            System.out.println("Item product id: " + item_info.get("product_id"));
-                            System.out.println("Item price: " + item_info.get("price"));
-                            System.out.println("Item variant title: " + item_info.get("variant_title"));
-                            System.out.println("Item grams: " + item_info.get("grams"));
-                            System.out.println("Item vendor: " + item_info.get("vendor"));
-                            System.out.println("Item count: " + item_info.get("item_count"));
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-
-                    }
-                }, new Response.ErrorListener() {
-
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.e("VOLLEY", "ERROR");
-
-                        // Handle network related Errors
-                        if (error.networkResponse == null) {
-
-                            // Handle network Timeout error
-                            if (error.getClass().equals(TimeoutError.class)) {
-                                Toast.makeText(getApplicationContext(),
-                                        "Request Timeout Error!", Toast.LENGTH_LONG)
-                                        .show();
-                            } else {
-                                Toast.makeText(getApplicationContext(),
-                                        "Network Error. No Internet Connection", Toast.LENGTH_LONG)
-                                        .show();
-                            }
-                        }
-                    }
-                });
-
-        JsonObjectR.setRetryPolicy(new DefaultRetryPolicy(JSON_TIME_OUT,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-
-        // Send the JSON request
-        JSONVolleyController.getInstance().addToRequestQueue(JsonObjectR);
-
-        return item_info;
-    }
-
 
 }

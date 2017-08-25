@@ -117,7 +117,7 @@ public class CustomerDetailsFragment extends Fragment {
                                             customer_info.put("email",Customer.getString("email") == "null" ? "-" : Customer.getString("email"));
                                             customer_info.put("phone", Customer.getString("phone") == "null" ? "-" : Customer.getString("phone"));
                                             customer_info.put("note", Customer.getString("note") == "null" ? "-" : Customer.getString("note"));
-                                            customer_info.put("total_spent", Customer.getString("note") == "null" ? "-" : Customer.getString("note"));
+                                            customer_info.put("total_spent", Customer.getString("total_spent") == "null" ? "-" : Customer.getString("total_spent"));
                                             // End: Get customer info and put on map
 
                                         }
@@ -136,7 +136,7 @@ public class CustomerDetailsFragment extends Fragment {
                             textView.append(" \n Phone: " + customer_info.get("phone"));
                             textView.append(" \n Note: " + customer_info.get("note"));
                             textView.append(" \n Total price : " + String.format("%.2f", customer_info.get("total_price")) + " CAD");
-                            textView.append(" \n Total spent: " + customer_info.get("total_spent"));
+                            textView.append(" \n Total spent: " + customer_info.get("total_spent") + " CAD");
 
                             ProgressBarCustomerDetails.setVisibility(View.INVISIBLE);
 
@@ -171,7 +171,7 @@ public class CustomerDetailsFragment extends Fragment {
         JsonObjectR.setRetryPolicy(new DefaultRetryPolicy(JSON_TIME_OUT,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
-        // Send the JSON request
+        // Add to JSON request Queue
         JSONVolleyController.getInstance().addToRequestQueue(JsonObjectR);
 
     }

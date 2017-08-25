@@ -33,30 +33,47 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+
+
+/**
+ * Activity of Item Stats Information page
+ *
+ * This activity consists of list view of all of the items with a custom dialog displaying
+ * the item information.
+ *
+ * @author Alexander Julianto (no131614)
+ * @version 1.0
+ * @since API 21
+ */
 public class ItemInfoActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
 
-    // All static variables
     final String URL = "https://shopicruit.myshopify.com/admin/orders.json?page=1&access_token=c32313df0d0ef512ca64d5b336a0d7c6";
 
-    final int JSON_TIME_OUT = 15000; //Set JSON Request Connection Timeout
+    // Set JSON Request Connection Timeout (15 seconds)
+    final int JSON_TIME_OUT = 15000;
 
     final Context context = this;
 
     private SwipeRefreshLayout swipeRefreshLayout;
 
-    ListView list;
+    private ListView list;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_info);
 
+        getSupportActionBar().setIcon(R.drawable.item_i);
+        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_TITLE);
+
+        // SwipeRefreshLayout to refresh the items list view
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout_item_info);
         swipeRefreshLayout.setOnRefreshListener(this);
 
         ArrayList itemList = new ArrayList();
         final ItemInfoListAdapter adapter = new ItemInfoListAdapter(ItemInfoActivity.this, itemList);
 
+        // Start a refresh onCreate and initialize JSON Volley Request for item list view
         swipeRefreshLayout.post(new Runnable() {
                                     @Override
                                     public void run() {
@@ -73,15 +90,17 @@ public class ItemInfoActivity extends AppCompatActivity implements SwipeRefreshL
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-                // custom dialog
+
+                // Initialize custom dialog for item information
                 final Dialog dialog = new Dialog(context);
                 dialog.setContentView(R.layout.item_info_dialog);
                 dialog.setTitle("Product Item Info");
 
-                // set the custom dialog components - text, image and button
-                TextView textView = (TextView) dialog.findViewById(R.id.item_TextViewDialog);
+                // Set the custom dialog text view for item information
+                TextView tvItemInfo = (TextView) dialog.findViewById(R.id.item_TextViewDialog);
 
-                JSONRequestGetItemInfo(parent.getItemAtPosition(position).toString(), textView);
+                // Get the item information to display on the text view
+                JSONRequestGetItemInfo(parent.getItemAtPosition(position).toString(), tvItemInfo);
 
                 Button buttonClose = (Button) dialog.findViewById(R.id.buttonClose);
                 buttonClose.setOnClickListener(new View.OnClickListener() {
@@ -96,11 +115,14 @@ public class ItemInfoActivity extends AppCompatActivity implements SwipeRefreshL
         });
 
 
-
-
     }
 
-
+    /**
+     * JSON Volley Request to get all of the different item products and
+     * add it to an adapter to be displayed on the list view.
+     *
+     * @param adapter - Adapter to be displayed on the list view
+     */
     private void JSONRequestGetProducts(ItemInfoListAdapter adapter) {
 
         final ArrayList product_list = new ArrayList();
@@ -161,9 +183,13 @@ public class ItemInfoActivity extends AppCompatActivity implements SwipeRefreshL
                                 }
                             });
 
+                            // Begin: Clear and add the product list into the adapter
                             final_adapter.clear();
                             final_adapter.addAll(product_list);
                             final_adapter.notifyDataSetChanged();
+                            // End: Clear and add the product list into the adapter
+
+
                             swipeRefreshLayout.setRefreshing(false);
 
                         } catch (Exception e) {
@@ -200,11 +226,19 @@ public class ItemInfoActivity extends AppCompatActivity implements SwipeRefreshL
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
 
-        // Send the JSON request
+        // Add to JSON request Queue
         JSONVolleyController.getInstance().addToRequestQueue(JsonObjectR);
     }
 
-    private void JSONRequestGetItemInfo(String item, final TextView textView) {
+
+    /**
+     * JSON Volley Request to get the information of the item passed into the argument
+     * and display it on the the text view.
+     *
+     * @param item - String contain the item name
+     * @param tvItemInfo - 
+     */
+    private void JSONRequestGetItemInfo(String item, final TextView tvItemInfo) {
 
 
         final String ITEM_NAME = item;
@@ -265,12 +299,14 @@ public class ItemInfoActivity extends AppCompatActivity implements SwipeRefreshL
 
                             }
 
-                            textView.setText(null);
-                            textView.append(" \n Name :" + ITEM_NAME);
-                            textView.append(" \n Product ID :" + item_info.get("product_id"));
-                            textView.append(" \n Number of Items Sold :" + item_info.get("item_count"));
-                            textView.append(" \n Total Price :" +
+                            // Begin: Display item information into the text view
+                            tvItemInfo.setText(null);
+                            tvItemInfo.append(" \n Name :" + ITEM_NAME);
+                            tvItemInfo.append(" \n Product ID :" + item_info.get("product_id"));
+                            tvItemInfo.append(" \n Number of Items Sold :" + item_info.get("item_count"));
+                            tvItemInfo.append(" \n Total Price :" +
                                     String.format("%.2f", item_info.get("total_price")) + " CAD");
+                            // End: Display item information into the text view
 
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -303,18 +339,24 @@ public class ItemInfoActivity extends AppCompatActivity implements SwipeRefreshL
         JsonObjectR.setRetryPolicy(new DefaultRetryPolicy(JSON_TIME_OUT,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
-        // Send the JSON request
+        // Add to JSON request Queue
         JSONVolleyController.getInstance().addToRequestQueue(JsonObjectR);
     }
 
 
+    /**
+     * Method inherited from SwipeRefreshLayout.OnRefreshListener. Executed on
+     * SwipeRefreshLayout refresh
+     */
     @Override
     public void onRefresh() {
+        // Begin: Refresh the item list on swipe down
         ArrayList itemList = new ArrayList();
         final ItemInfoListAdapter adapter = new ItemInfoListAdapter(ItemInfoActivity.this, itemList);
         JSONRequestGetProducts(adapter);
         list = (ListView) findViewById(R.id.item_listView);
         list.setAdapter(adapter);
+        // End: Refresh the item list on swipe down
     }
 }
 
