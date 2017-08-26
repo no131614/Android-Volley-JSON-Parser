@@ -49,7 +49,7 @@ Note: If an order does not have a customer object, the app will use the name fie
 ## Item Stats Information
 
 <p align="center">
-  <img src="https://github.com/no131614/Android-Volley-JSON-Parser/blob/master/readme_pictures/Item_Info_Large.png">
+  <img src="https://github.com/no131614/Android-Volley-JSON-Parser/blob/master/readme_pictures/Item_Info.png">
 </p>
 
 The Item Stats Information activity page displays a list of all product item names that are in the orders. Upon selecting a item from the list, the page will display a custom dialog that displays the item information:
