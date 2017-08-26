@@ -10,6 +10,7 @@ This Android application is created as part of the [Shopify Winter 2018 Internsh
 ### Note
 - Current app API level is 21 (Lollipop 5.0)
 - This app was tested on Samsung Galaxy Tab S2 9.7" (Android API level 24 Nougat	7.0) and Samsung Galaxy S4 (Android API level 21 Lollipop	5.0)
+- This app uses the [Android Volley Library](https://developer.android.com/training/volley/index.html)
 
 ## Dashboard
 <p align="center">
