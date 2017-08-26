@@ -8,14 +8,15 @@
     <application
         android:name=".JSONVolleyController"
         android:allowBackup="true"
-        android:icon="@drawable/bag"
-        android:label="JSON Order Parser"
-        android:roundIcon="@drawable/bag"
+        android:icon="@drawable/online_shop"
+        android:label="@string/app_name"
+        android:roundIcon="@drawable/online_shop"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
         <activity
             android:name=".MainActivity"
-            android:label="JSON Order Parser"
+            android:label="@string/app_name"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -23,18 +24,19 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".CustomerDetailsActivity" />
 
-        <activity android:name=".ItemInfoActivity"
-            android:icon="@drawable/item_i"
-            android:screenOrientation="portrait"
-            android:label=""
-            />
+        <activity
+            android:name=".CustomerDetailsActivity"
+            android:label="Customer Information" />
+
+        <activity
+            android:name=".ItemInfoActivity"
+            android:label=" Item Stats Information"
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".CustomerActivity"
-            android:icon="@drawable/customer_i"
-            android:label="" />
+            android:label="Customer Information" />
 
     </application>
 

@@ -3,6 +3,7 @@ package first.alexander.com.androidvolleyparser;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
@@ -24,6 +25,10 @@ public class CustomerDetailsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_customer_details);
+
+        // Set an Icon in the app title bar
+        getSupportActionBar().setIcon(R.drawable.customer_i_small);
+        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_TITLE);
 
         // Begin: Set up FragmentManager and get previous fragment (if exist)
         FragmentManager fragmentManager = getFragmentManager();

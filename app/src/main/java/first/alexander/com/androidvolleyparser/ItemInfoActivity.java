@@ -63,7 +63,7 @@ public class ItemInfoActivity extends AppCompatActivity implements SwipeRefreshL
         setContentView(R.layout.activity_item_info);
 
         // Set an Icon in the app title bar
-        getSupportActionBar().setIcon(R.drawable.item_i);
+        getSupportActionBar().setIcon(R.drawable.item_i_small);
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_TITLE);
 
         // SwipeRefreshLayout to refresh the items list view

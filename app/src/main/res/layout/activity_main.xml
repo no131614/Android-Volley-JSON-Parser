@@ -63,7 +63,7 @@
             android:id="@+id/textViewItemNum"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Number of Item Sold"
+            android:text="Total Items Sold"
             android:textSize="16dp"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true" />

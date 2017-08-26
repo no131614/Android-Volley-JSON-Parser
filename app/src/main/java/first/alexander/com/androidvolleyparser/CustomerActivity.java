@@ -31,7 +31,7 @@ public class CustomerActivity extends AppCompatActivity implements CustomerInfoF
         setContentView(R.layout.activity_customer);
 
         // Set an Icon in the app title bar
-        getSupportActionBar().setIcon(R.drawable.customer_i);
+        getSupportActionBar().setIcon(R.drawable.customer_i_small);
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_TITLE);
     }
 
