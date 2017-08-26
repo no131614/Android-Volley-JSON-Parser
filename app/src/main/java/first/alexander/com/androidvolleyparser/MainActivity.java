@@ -21,15 +21,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
-
 
 /**
  * Main Activity of Android Volley Parser
- *
+ * <p>
  * This activity contains main implementation of the Dashboard
  *
  * @author Alexander Julianto (no131614)
@@ -64,17 +59,17 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ProgressBarCustomer = (ProgressBar)findViewById(R.id.progressBarCustomer);
-        ProgressBarItem= (ProgressBar)findViewById(R.id.progressBarItem);
-        ProgressBarPrice = (ProgressBar)findViewById(R.id.progressBarPrice);
+        ProgressBarCustomer = (ProgressBar) findViewById(R.id.progressBarCustomer);
+        ProgressBarItem = (ProgressBar) findViewById(R.id.progressBarItem);
+        ProgressBarPrice = (ProgressBar) findViewById(R.id.progressBarPrice);
 
         tvNumItems = (TextView) findViewById(R.id.textViewTotalNumItems);
         tvPriceAmount = (TextView) findViewById(R.id.textViewTotalPriceAmount);
         tvFavCustomer = (TextView) findViewById(R.id.textViewFavouriteCustomer);
-        tvTotalSpent = (TextView) findViewById(R.id.  textViewTotalSpent);
+        tvTotalSpent = (TextView) findViewById(R.id.textViewTotalSpent);
 
         // Begin: First JSON Volley Request for Dashboard
-        JSONRequestTotalNumOfItemsAndPrice(tvPriceAmount,tvNumItems);
+        JSONRequestTotalNumOfItemsAndPrice(tvPriceAmount, tvNumItems);
         JSONRequestGetFavouriteCustomer(tvFavCustomer, tvTotalSpent);
         // End: First JSON Volley Request for Dashboard
 
@@ -100,11 +95,11 @@ public class MainActivity extends AppCompatActivity {
 
         });
 
-        imageButtonRefresh  = (ImageButton) findViewById(R.id.imageButtonRefresh);
+        imageButtonRefresh = (ImageButton) findViewById(R.id.imageButtonRefresh);
         imageButtonRefresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                JSONRequestTotalNumOfItemsAndPrice(tvPriceAmount,tvNumItems);
+                JSONRequestTotalNumOfItemsAndPrice(tvPriceAmount, tvNumItems);
                 JSONRequestGetFavouriteCustomer(tvFavCustomer, tvTotalSpent);
             }
 
@@ -124,10 +119,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * JSON Volley Request to get number total price of all items and total number of items.
+     * JSON Volley Request to get number total price of all items and total number of items
+     * and display on the specified text views.
      *
      * @param tvPrice - Text view to display the total price of all items
-     * @param tvItem - Text view to display total number of items
+     * @param tvItem  - Text view to display total number of items
      */
     private void JSONRequestTotalNumOfItemsAndPrice(final TextView tvPrice, final TextView tvItem) {
 
@@ -176,11 +172,13 @@ public class MainActivity extends AppCompatActivity {
 
                             }
 
-                            // Begin: Display text view for
+                            // Begin: Display total num items and price on text view
                             tvItem.setText(null);
                             tvItem.append("" + item_count);
                             tvPrice.setText(null);
                             tvPrice.append(String.format("%.2f", total_price_amount) + " CAD");
+                            // End: Display total num items and price on text view
+
                             ProgressBarItem.setVisibility(View.INVISIBLE);
                             ProgressBarPrice.setVisibility(View.INVISIBLE);
 
@@ -228,10 +226,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * JSON Volley Request to get the favourite customer base on the top total spent.
+     * JSON Volley Request to get the favourite customer base on the top total spent
+     * and display on the specified text views.
      *
      * @param tvFavCustomer - Text view to display the favourite customer
-     * @param tvTotalSpent - Text view to display the total spent of the favourite customer
+     * @param tvTotalSpent  - Text view to display the total spent of the favourite customer
      */
     private void JSONRequestGetFavouriteCustomer(final TextView tvFavCustomer, final TextView tvTotalSpent) {
 
@@ -283,12 +282,12 @@ public class MainActivity extends AppCompatActivity {
                                 }
                             }
 
-                            // Begin: Display text view for fav customer and total spent
+                            // Begin: Display fav customer and total spent on text view
                             tvFavCustomer.setText(null);
                             tvFavCustomer.append(favourite_customer);
                             tvTotalSpent.setText(null);
                             tvTotalSpent.append("With Total Spent of " + largest_total_spent + " CAD");
-                            // End: Display text view for fav customer and total spent
+                            // End: Display fav customer and total spent on text view
 
                             ProgressBarCustomer.setVisibility(View.INVISIBLE);
 

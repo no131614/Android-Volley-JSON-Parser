@@ -6,6 +6,18 @@ import android.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+
+/**
+ * Activity of Customer Info Detail Page
+ *
+ * This Activity is to display customer information upon selecting the
+ * customer name in the list and the current android device orientation
+ * is portrait.
+ *
+ * @author Alexander Julianto (no131614)
+ * @version 1.0
+ * @since API 21
+ */
 public class CustomerDetailsActivity extends AppCompatActivity {
 
     @Override
@@ -13,41 +25,33 @@ public class CustomerDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_customer_details);
 
-
-        /** Setting the layout for this activity */
-        setContentView(R.layout.activity_customer_details);
-
-        /** Getting the fragment manager for fragment related operations */
+        // Begin: Set up FragmentManager and get previous fragment (if exist)
         FragmentManager fragmentManager = getFragmentManager();
-
-        /** Getting the fragment transaction object, which can be used to add, remove or replace a fragment */
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-///////////////// Need To Delete previous fragment !!!!
         Fragment prevFrag = fragmentManager.findFragmentById(R.id.customer_details_fragment_container);
+        // End: Set up FragmentManager and get previous fragment (if exist)
 
-        /** Remove the existing detailed fragment object if it exists */
+        // Need to remove any previous existing fragments
         if(prevFrag!=null) {
             fragmentTransaction.remove(prevFrag);
         }
-/////////////////
 
-        /** Instantiating the fragment CountryDetailsFragment */
+        // Instantiate new fragment CustomerDetailsFragment
         CustomerDetailsFragment detailsFragment = new CustomerDetailsFragment();
 
-        /** Creating a bundle object to pass the data(the clicked item's position) from the activity to the fragment */
+        // Bundle object to pass data to fragments the selected customer from list
         Bundle b = new Bundle();
 
-        /** Setting the data to the bundle object from the Intent*/
+        // Pass customer name to bundle from previous activity
         b.putString("name", getIntent().getStringExtra("name"));
 
-        /** Setting the bundle object to the fragment */
+        // Set the bundle object to the new fragment
         detailsFragment.setArguments(b);
 
-        /** Adding the fragment to the fragment transaction */
+        // Adding the new fragment to transaction
         fragmentTransaction.add(R.id.customer_details_fragment_container, detailsFragment);
 
-        /** Making this transaction in effect */
+        // Set fragment transaction
         fragmentTransaction.commit();
 
     }

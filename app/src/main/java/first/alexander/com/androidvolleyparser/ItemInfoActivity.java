@@ -34,12 +34,11 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 
-
 /**
  * Activity of Item Stats Information page
- *
- * This activity consists of list view of all of the items with a custom dialog displaying
- * the item information.
+ * <p>
+ * This activity consists the implementation of list view of all
+ * of the items with a custom dialog displaying the item information.
  *
  * @author Alexander Julianto (no131614)
  * @version 1.0
@@ -63,6 +62,7 @@ public class ItemInfoActivity extends AppCompatActivity implements SwipeRefreshL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_info);
 
+        // Set an Icon in the app title bar
         getSupportActionBar().setIcon(R.drawable.item_i);
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_TITLE);
 
@@ -183,12 +183,12 @@ public class ItemInfoActivity extends AppCompatActivity implements SwipeRefreshL
                                 }
                             });
 
-                            // Begin: Clear and add the product list into the adapter
+                            // Clear and add the product list into the adapter
                             final_adapter.clear();
                             final_adapter.addAll(product_list);
-                            final_adapter.notifyDataSetChanged();
-                            // End: Clear and add the product list into the adapter
 
+                            // Notify the adapter to be updated
+                            final_adapter.notifyDataSetChanged();
 
                             swipeRefreshLayout.setRefreshing(false);
 
@@ -233,10 +233,10 @@ public class ItemInfoActivity extends AppCompatActivity implements SwipeRefreshL
 
     /**
      * JSON Volley Request to get the information of the item passed into the argument
-     * and display it on the the text view.
+     * and display it on the specified text view.
      *
-     * @param item - String contain the item name
-     * @param tvItemInfo - 
+     * @param item       - String contain the item name
+     * @param tvItemInfo - Text view to display the item information
      */
     private void JSONRequestGetItemInfo(String item, final TextView tvItemInfo) {
 

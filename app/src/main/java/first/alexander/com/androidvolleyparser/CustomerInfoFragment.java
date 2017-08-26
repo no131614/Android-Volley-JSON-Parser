@@ -27,28 +27,35 @@ import java.util.Collections;
 import java.util.Comparator;
 
 
-public class CustomerInfoFragment extends ListFragment{
+public class CustomerInfoFragment extends ListFragment {
 
-    ListFragmentItemClickListener ifaceItemClickListener;
+    ListFragmentItemClickListener itemClickListener;
 
     final String URL = "https://shopicruit.myshopify.com/admin/orders.json?page=1&access_token=c32313df0d0ef512ca64d5b336a0d7c6";
+
     final int JSON_TIME_OUT = 15000; //Set JSON Request Connection Timeout
 
-    /** An interface for defining the callback method */
+    /**
+     * Interface for callback method. Will be invoked when an item in the
+     * ListFragment is clicked.
+     */
     public interface ListFragmentItemClickListener {
-        /** This method will be invoked when an item in the ListFragment is clicked */
         void onListFragmentItemClick(String name);
     }
 
-    /** A callback function, executed when this fragment is attached to an activity */
+    /**
+     * A callback function, executed when this fragment is attached to an activity
+     *
+     * @param activity - the activity attached on
+     */
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        try{
-            /** This statement ensures that the hosting activity implements ListFragmentItemClickListener */
-            ifaceItemClickListener = (ListFragmentItemClickListener) activity;
-        }catch(Exception e){
-            Toast.makeText(activity.getBaseContext(), "Exception",Toast.LENGTH_SHORT).show();
+        try {
+            // Ensures the activity implements ListFragmentItemClickListener
+            itemClickListener = (ListFragmentItemClickListener) activity;
+        } catch (Exception e) {
+            Toast.makeText(activity.getBaseContext(), "Exception", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -56,12 +63,13 @@ public class CustomerInfoFragment extends ListFragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
 
-        /** Data source for the ListFragment */
+        // Set the adapter for the list of customers
         final ArrayAdapter<String> adapter = new ArrayAdapter<String>(inflater.getContext(), android.R.layout.simple_list_item_1);
+
+        // Get the list of customers for the adapter
         JSONRequestGetCustomers(adapter);
 
-
-        /** Setting the data source to the ListFragment */
+        // Set the adapter to the list fragment
         setListAdapter(adapter);
 
         return super.onCreateView(inflater, container, savedInstanceState);
@@ -70,12 +78,18 @@ public class CustomerInfoFragment extends ListFragment{
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
 
-        /** Invokes the implementation of the method onListFragmentItemClick in the hosting activity */
-        ifaceItemClickListener.onListFragmentItemClick(l.getItemAtPosition(position).toString());
+        // Invokes the implementation of onListFragmentItemClick in the hosting activity
+        itemClickListener.onListFragmentItemClick(l.getItemAtPosition(position).toString());
 
     }
 
 
+    /**
+     * JSON Volley Request to get all of the different customers and
+     * add it to an adapter to be displayed on the list view.
+     *
+     * @param adapter - Adapter to be displayed on the list view
+     */
     private void JSONRequestGetCustomers(ArrayAdapter adapter) {
 
         final ArrayList customers_list = new ArrayList();
@@ -136,9 +150,13 @@ public class CustomerInfoFragment extends ListFragment{
                                 }
                             });
 
+                            // Clear and add the customer list into the adapter
                             final_adapter.clear();
                             final_adapter.addAll(customers_list);
+
+                            // Notify the adapter to be updated
                             final_adapter.notifyDataSetChanged();
+
 
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -156,9 +174,9 @@ public class CustomerInfoFragment extends ListFragment{
 
                             // Handle network Timeout error
                             if (error.getClass().equals(TimeoutError.class)) {
-                                Toast.makeText(getActivity(),"Request Timeout Error!",Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getActivity(), "Request Timeout Error!", Toast.LENGTH_SHORT).show();
                             } else {
-                                Toast.makeText(getActivity(),"Network Error. No Internet Connection!",Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getActivity(), "Network Error. No Internet Connection!", Toast.LENGTH_SHORT).show();
                             }
                         }
                     }

@@ -10,6 +10,19 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 
+/**
+ * Activity of Customer Info Page
+ * <p>
+ * (Landscape orientation) consist of a list fragment containing a list of customers and displays
+ * the customer information fragment upon selecting a customer from the list.
+ * <p>
+ * (Portrait orientation) consist of a list containing customers and move to another activity
+ * that displays customer information upon selecting a customer from the list.
+ *
+ * @author Alexander Julianto (no131614)
+ * @version 1.0
+ * @since API 21
+ */
 public class CustomerActivity extends AppCompatActivity implements CustomerInfoFragment.ListFragmentItemClickListener {
 
     @Override
@@ -17,66 +30,58 @@ public class CustomerActivity extends AppCompatActivity implements CustomerInfoF
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_customer);
 
+        // Set an Icon in the app title bar
         getSupportActionBar().setIcon(R.drawable.customer_i);
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_TITLE);
     }
 
-    /** This method will be executed when the user clicks on an item in the listview */
     @Override
     public void onListFragmentItemClick(String name) {
 
-        /** Getting the orientation ( Landscape or Portrait ) of the screen */
+        // Check the current android device orientation (Landscape or Portrait)
         int orientation = getResources().getConfiguration().orientation;
 
-        /** Landscape Mode */
-        if(orientation == Configuration.ORIENTATION_LANDSCAPE ){
-            /** Getting the fragment manager for fragment related operations */
+        // If the android device orientation is Landscape
+        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+
+            // Begin: Set up FragmentManager and get previous fragment (if exist)
             FragmentManager fragmentManager = getFragmentManager();
-
-            /** Getting the fragment transaction object, which can be used to add, remove or replace a fragment */
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-            /** Getting the existing detailed fragment object, if it already exists.
-             *  The fragment object is retrieved by its tag name
-             * */
             Fragment prevFrag = fragmentManager.findFragmentById(R.id.detail_fragment_container);
+            // End: Set up FragmentManager and get previous fragment (if exist)
 
-            /** Remove the existing detailed fragment object if it exists */
-            if(prevFrag!=null) {
+            // Need to remove any previous existing fragments
+            if (prevFrag != null) {
                 fragmentTransaction.remove(prevFrag);
             }
 
-            /** Instantiating the fragment CustomerDetailsFragment */
+            // Instantiate new fragment CustomerDetailsFragment
             CustomerDetailsFragment customerDetailsFragment = new CustomerDetailsFragment();
 
-            /** Creating a bundle object to pass the data(the clicked item's position) from the activity to the fragment */
+            // Bundle object to pass data to fragments
             Bundle b = new Bundle();
 
-            /** Setting the data to the bundle object */
+            // Pass customer name to bundle
             b.putString("name", name);
 
-            /** Setting the bundle object to the fragment */
+            // Set the bundle object to the new fragment
             customerDetailsFragment.setArguments(b);
 
-            /** Adding the fragment to the fragment transaction */
+            // Adding the new fragment to transaction
             fragmentTransaction.add(R.id.detail_fragment_container, customerDetailsFragment);
 
-            /** Adding this transaction to back stack */
-            fragmentTransaction.addToBackStack(null);
-
-            /** Making this transaction in effect */
+            // Set fragment transaction
             fragmentTransaction.commit();
 
-        }else{
-            /** Portrait Mode or Square mode */
-            /** Creating an intent object to start the CountryDetailsActivity */
+        } else { // If the android device orientation is Portrait or other
+
+            // Begin: Go and send selected customer name to CustomerDetailsActivity
             Intent intent = new Intent(this, CustomerDetailsActivity.class);
-
-            /** Setting data ( the clicked item's position ) to this intent */
             intent.putExtra("name", name);
-
-            /** Starting the activity by passing the implicit intent */
             startActivity(intent);
+            // End: Go and send selected customer name to CustomerDetailsActivity
+
         }
     }
+
 }

@@ -25,39 +25,46 @@ import java.util.HashMap;
 import java.util.Map;
 
 
+/**
+ * CustomerDetailsFragment.java - an android fragment class to display customer information.
+ *
+ * @author Alexander Julianto (no131614)
+ */
 public class CustomerDetailsFragment extends Fragment {
 
     final String URL = "https://shopicruit.myshopify.com/admin/orders.json?page=1&access_token=c32313df0d0ef512ca64d5b336a0d7c6";
+
     final int JSON_TIME_OUT = 15000; //Set JSON Request Connection Timeout
 
     ProgressBar ProgressBarCustomerDetails;
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-
-        /** Inflating the layout country_details_fragment_layout to the view object v */
         View v = inflater.inflate(R.layout.customer_details_fragment_layout, null);
 
         ProgressBarCustomerDetails = (ProgressBar) v.findViewById(R.id.progressBarCustomerDetails);
 
-        /** Getting the textview object of the layout to set the details */
-        TextView tv = (TextView) v.findViewById(R.id.customer_details);
+        TextView tvCustomerInfo = (TextView) v.findViewById(R.id.customer_details);
 
-        /** Getting the bundle object passed from MainActivity ( in Landscape mode )  or from
-         *  CountryDetailsActivity ( in Portrait Mode )
-         * */
+        // Passed bundle object to get customer name
         Bundle b = getArguments();
 
-        /** Getting the clicked item's position and setting corresponding details in the textview of the detailed fragment */
-        JSONRequestGetCustomerInfo(b.getString("name"), tv);
+        // Get the customer info and display on the text view
+        JSONRequestGetCustomerInfo(b.getString("name"), tvCustomerInfo);
 
         return v;
     }
 
 
-    private void JSONRequestGetCustomerInfo(String name, final TextView textView) {
+    /**
+     * JSON Volley Request to get a customer information base on their name
+     * and display on the specified text view
+     *
+     * @param name           - String name of the customer
+     * @param tvCustomerInfo - Text view to display customer info
+     */
+    private void JSONRequestGetCustomerInfo(String name, final TextView tvCustomerInfo) {
 
         ProgressBarCustomerDetails.setVisibility(View.VISIBLE);
 
@@ -105,7 +112,6 @@ public class CustomerDetailsFragment extends Fragment {
                                     try {
                                         JSONObject Customer = Order.getJSONObject("customer");// Customer info might not exist
 
-
                                         String first_name = Customer.getString("first_name");
                                         String last_name = Customer.getString("last_name");
                                         if (first_name.equals(FIRST_NAME) && last_name.equals(LAST_NAME)) {
@@ -114,10 +120,11 @@ public class CustomerDetailsFragment extends Fragment {
                                             total_price_amount += Order.getDouble("total_price");
                                             customer_info.put("total_price", total_price_amount);
                                             customer_info.put("id", Customer.getString("id") == "null" ? "-" : Customer.getString("id"));
-                                            customer_info.put("email",Customer.getString("email") == "null" ? "-" : Customer.getString("email"));
+                                            customer_info.put("email", Customer.getString("email") == "null" ? "-" : Customer.getString("email"));
                                             customer_info.put("phone", Customer.getString("phone") == "null" ? "-" : Customer.getString("phone"));
                                             customer_info.put("note", Customer.getString("note") == "null" ? "-" : Customer.getString("note"));
-                                            customer_info.put("total_spent", Customer.getString("total_spent") == "null" ? "-" : Customer.getString("total_spent"));
+                                            customer_info.put("total_spent",
+                                                    Customer.getString("total_spent") == "null" ? "-" : Customer.getString("total_spent"));
                                             // End: Get customer info and put on map
 
                                         }
@@ -128,15 +135,18 @@ public class CustomerDetailsFragment extends Fragment {
                                 }
                             }
 
-                            textView.setText(null);
-                            textView.append(" \n First Name: " + FIRST_NAME);
-                            textView.append(" \n Last Name: " + LAST_NAME);
-                            textView.append(" \n ID: " + customer_info.get("id"));
-                            textView.append(" \n Email: " + customer_info.get("email"));
-                            textView.append(" \n Phone: " + customer_info.get("phone"));
-                            textView.append(" \n Note: " + customer_info.get("note"));
-                            textView.append(" \n Total price : " + String.format("%.2f", customer_info.get("total_price")) + " CAD");
-                            textView.append(" \n Total spent: " + customer_info.get("total_spent") + " CAD");
+                            // Begin: Display customer info on text view
+                            tvCustomerInfo.setText(null);
+                            tvCustomerInfo.append(" \n First Name: " + FIRST_NAME);
+                            tvCustomerInfo.append(" \n Last Name: " + LAST_NAME);
+                            tvCustomerInfo.append(" \n ID: " + customer_info.get("id"));
+                            tvCustomerInfo.append(" \n Email: " + customer_info.get("email"));
+                            tvCustomerInfo.append(" \n Phone: " + customer_info.get("phone"));
+                            tvCustomerInfo.append(" \n Note: " + customer_info.get("note"));
+                            tvCustomerInfo.append(" \n Total price : " +
+                                    String.format("%.2f", customer_info.get("total_price")) + " CAD");
+                            tvCustomerInfo.append(" \n Total spent: " + customer_info.get("total_spent") + " CAD");
+                            // End: Display customer info on text view
 
                             ProgressBarCustomerDetails.setVisibility(View.INVISIBLE);
 
